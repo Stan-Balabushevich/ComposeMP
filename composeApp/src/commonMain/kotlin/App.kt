@@ -63,9 +63,11 @@ fun App(
                     Text("Compose: $greeting")
                     Text("Battery level: $batteryLevel")
                 }
+
                 LazyColumn(
                     modifier = Modifier
-                        .fillMaxSize(),
+                        .fillMaxSize()
+                        .padding(top = 26.dp),
                     contentPadding = PaddingValues(16.dp),
                 ) {
                     items(people) { person ->

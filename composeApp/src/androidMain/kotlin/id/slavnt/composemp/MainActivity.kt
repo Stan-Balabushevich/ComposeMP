@@ -14,10 +14,13 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val dbDao =  getPeopleDatabase(applicationContext).peopleDao()
+//        val dbDao =  getPeopleDatabase(applicationContext).peopleDao()
 
         setContent {
 
+            val dbDao = remember {
+                getPeopleDatabase(applicationContext).peopleDao()
+            }
 
             App(batteryManager = BatteryManager(applicationContext), peopleDao = dbDao)
         }
