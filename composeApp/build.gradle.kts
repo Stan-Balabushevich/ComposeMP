@@ -62,6 +62,7 @@ kotlin {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
             implementation(libs.room.runtime.android)
+            implementation(libs.koin.android)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -71,12 +72,21 @@ kotlin {
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
 
+            //room
             implementation(libs.room.runtime)
             implementation(libs.sqlite.bundled)
+
+            //koin
+            implementation(libs.koin.core)
+            implementation(libs.koin.compose)
+
+            //common viewmodel
+            implementation(libs.lifecycle.viewmodel.compose)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.oshi.core)
+            implementation(libs.koin.core)
         }
     }
 }
