@@ -1,9 +1,4 @@
-import androidx.compose.runtime.remember
 import androidx.compose.ui.window.ComposeUIViewController
-import database.getPeopleDatabase
+import presentation.App
 
-fun MainViewController() = ComposeUIViewController {
-
-    val dbDao = remember { getPeopleDatabase().peopleDao() }
-
-    App(batteryManager = BatteryManager(), peopleDao = dbDao) }
+fun MainViewController() = ComposeUIViewController { App() }

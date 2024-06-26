@@ -2,6 +2,7 @@ package id.slavnt.composemp
 
 import android.app.Application
 import id.slavnt.composemp.di.platformModule
+import id.slavnt.composemp.di.presentationModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 
@@ -14,7 +15,8 @@ class MyApplication: Application() {
 
             androidContext(this@MyApplication)
             modules(
-                platformModule
+                platformModule,
+                presentationModule
             )
         }
     }

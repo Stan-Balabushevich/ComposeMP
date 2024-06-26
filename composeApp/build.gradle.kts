@@ -87,6 +87,9 @@ kotlin {
             implementation(compose.desktop.currentOs)
             implementation(libs.oshi.core)
             implementation(libs.koin.core)
+
+            implementation(libs.kotlinx.coroutines.core) // Needed for basic coroutine support
+            implementation(libs.kotlinx.coroutines.swing) // Needed for Swing-specific coroutine support for desktop
         }
     }
 }

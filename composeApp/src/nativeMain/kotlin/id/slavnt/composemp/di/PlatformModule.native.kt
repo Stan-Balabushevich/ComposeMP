@@ -1,5 +1,6 @@
 package id.slavnt.composemp.di
 
+import BatteryManager
 import database.PeopleDatabase
 import database.getPeopleDatabase
 import org.koin.core.module.Module
@@ -10,4 +11,5 @@ actual val platformModule: Module
         single<PeopleDatabase> {
             getPeopleDatabase()
         }
+        single { BatteryManager() }
     }
