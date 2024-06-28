@@ -1,15 +1,14 @@
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
-import id.slavnt.composemp.di.platformModule
-import id.slavnt.composemp.di.presentationModule
-import org.koin.core.context.startKoin
+import id.slavnt.composemp.di.KoinInitializer
 import presentation.App
 
 fun main() = application {
 
-    startKoin {
-        modules(platformModule, presentationModule)
-    }
+    val init = KoinInitializer()
+
+    if (!init.isKoinStarted())
+    init.startKoinIfNeeded()
 
     Window(
         onCloseRequest = ::exitApplication,
