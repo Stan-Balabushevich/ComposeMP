@@ -1,7 +1,7 @@
 package id.slavnt.composemp
 
 import android.app.Application
-import id.slavnt.composemp.di.KoinInitializer
+import KoinInitializer
 
 class MyApplication: Application() {
 

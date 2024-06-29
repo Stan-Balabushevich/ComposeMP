@@ -3,7 +3,10 @@ import presentation.App
 
 fun MainViewController() = ComposeUIViewController {
 
-  // TODO init koin here
+  val koinInit = KoinInitializer
+
+  if (!koinInit.isKoinStarted())
+    koinInit.startKoinIfNeeded()
 
 
     App()

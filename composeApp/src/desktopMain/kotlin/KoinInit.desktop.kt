@@ -1,16 +1,13 @@
-package id.slavnt.composemp.di
-
-import android.content.Context
-import org.koin.android.ext.koin.androidContext
+import id.slavnt.composemp.di.platformModule
+import id.slavnt.composemp.di.presentationModule
 import org.koin.core.context.startKoin
 
-actual class KoinInitializer(private val context: Context) {
+actual class KoinInitializer {
     private var isStarted = false
 
     actual fun startKoinIfNeeded() {
         if (!isStarted) {
             startKoin {
-                androidContext(context)  // Android-specific context
                 modules(listOf(presentationModule, platformModule))
             }
             isStarted = true
@@ -18,4 +15,5 @@ actual class KoinInitializer(private val context: Context) {
     }
 
     actual fun isKoinStarted(): Boolean = isStarted
+
 }
