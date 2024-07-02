@@ -62,7 +62,9 @@ kotlin {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
             implementation(libs.room.runtime.android)
+
             implementation(libs.koin.android)
+            implementation(libs.koin.androidx.compose)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -77,11 +79,16 @@ kotlin {
             implementation(libs.sqlite.bundled)
 
             //koin
+            // if use api in common instead of implementation than do not have to implement it for all platforms
+//            api(libs.koin.core)
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
+            implementation(libs.koin.compose.viewmodel)
+            implementation(libs.lifecycle.viewmodel)
+            implementation(libs.navigation.compose)
 
             //common viewmodel
-            implementation(libs.lifecycle.viewmodel.compose)
+//            implementation(libs.lifecycle.viewmodel.compose)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)

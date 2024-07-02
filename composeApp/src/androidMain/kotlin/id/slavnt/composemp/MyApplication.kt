@@ -1,26 +1,17 @@
 package id.slavnt.composemp
 
 import android.app.Application
-import KoinInitializer
+import id.slavnt.composemp.di.initKoin
+import org.koin.android.ext.koin.androidContext
 
 class MyApplication: Application() {
 
     override fun onCreate() {
         super.onCreate()
 
-        val koinInit = KoinInitializer(this)
-
-        if (!koinInit.isKoinStarted()) {
-            koinInit.startKoinIfNeeded()
+        initKoin {
+            androidContext(this@MyApplication)
         }
 
-//        startKoin {
-//
-//            androidContext(this@MyApplication)
-//            modules(
-//                platformModule,
-//                presentationModule
-//            )
-//        }
     }
 }

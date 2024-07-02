@@ -1,13 +1,11 @@
 import androidx.compose.ui.window.ComposeUIViewController
+import id.slavnt.composemp.di.initKoin
 import presentation.App
 
-fun MainViewController() = ComposeUIViewController {
-
-  val koinInit = KoinInitializer
-
-  if (!koinInit.isKoinStarted())
-    koinInit.startKoinIfNeeded()
-
-
+fun MainViewController() = ComposeUIViewController(
+                      configure = {
+                        initKoin()
+                      }
+) {
     App()
 }

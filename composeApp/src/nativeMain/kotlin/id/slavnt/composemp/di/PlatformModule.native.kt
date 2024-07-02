@@ -12,4 +12,5 @@ actual val platformModule: Module
             getPeopleDatabase()
         }
         single { BatteryManager() }
+
     }
