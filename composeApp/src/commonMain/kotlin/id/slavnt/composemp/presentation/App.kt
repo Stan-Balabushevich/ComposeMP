@@ -1,4 +1,4 @@
-package presentation
+package id.slavnt.composemp.presentation
 
 import Greeting
 import androidx.compose.animation.AnimatedVisibility

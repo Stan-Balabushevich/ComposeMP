@@ -1,13 +1,14 @@
-package database
+package id.slavnt.composemp.data.local.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import id.slavnt.composemp.data.local.database.db_object.Person
 
 @Database(
     entities = [Person::class],
     version = 1
 )
-abstract class PeopleDatabase: RoomDatabase(), DB{
+abstract class PeopleDatabase: RoomDatabase(), DB {
 
     abstract fun peopleDao(): PeopleDao
 

@@ -1,9 +1,10 @@
-package database
+package id.slavnt.composemp.data.local.database
 
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Upsert
+import id.slavnt.composemp.data.local.database.db_object.Person
 import kotlinx.coroutines.flow.Flow
 
 @Dao

@@ -1,4 +1,4 @@
-package database
+package id.slavnt.composemp.data.local.database.db_object
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

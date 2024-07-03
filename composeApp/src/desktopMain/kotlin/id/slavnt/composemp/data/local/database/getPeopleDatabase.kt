@@ -1,4 +1,4 @@
-package database
+package id.slavnt.composemp.data.local.database
 
 import androidx.room.Room
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver

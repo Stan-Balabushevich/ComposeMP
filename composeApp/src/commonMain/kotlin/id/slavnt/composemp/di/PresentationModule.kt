@@ -2,7 +2,7 @@ package id.slavnt.composemp.di
 
 import org.koin.compose.viewmodel.dsl.viewModelOf
 import org.koin.dsl.module
-import presentation.AppViewModel
+import id.slavnt.composemp.presentation.AppViewModel
 
 val presentationModule = module {
 

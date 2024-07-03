@@ -1,8 +1,8 @@
 package id.slavnt.composemp.di
 
 import BatteryManager
-import database.PeopleDatabase
-import database.getPeopleDatabase
+import id.slavnt.composemp.data.local.database.PeopleDatabase
+import id.slavnt.composemp.data.local.database.getPeopleDatabase
 import org.koin.core.module.Module
 import org.koin.dsl.module
 

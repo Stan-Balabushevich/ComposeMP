@@ -1,7 +1,7 @@
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import id.slavnt.composemp.di.initKoin
-import presentation.App
+import id.slavnt.composemp.presentation.App
 
 fun main() = application {
 

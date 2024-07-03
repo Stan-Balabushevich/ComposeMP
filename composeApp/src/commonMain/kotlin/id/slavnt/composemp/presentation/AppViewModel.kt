@@ -1,10 +1,10 @@
-package presentation
+package id.slavnt.composemp.presentation
 
 import BatteryManager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import database.PeopleDatabase
-import database.Person
+import id.slavnt.composemp.data.local.database.PeopleDatabase
+import id.slavnt.composemp.data.local.database.db_object.Person
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.delay

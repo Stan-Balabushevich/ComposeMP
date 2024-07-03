@@ -65,6 +65,9 @@ kotlin {
 
             implementation(libs.koin.android)
             implementation(libs.koin.androidx.compose)
+
+            implementation(libs.ktor.client.okhttp)
+            implementation (libs.ktor.client.android)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -80,12 +83,21 @@ kotlin {
 
             //koin
             // if use api in common instead of implementation than do not have to implement it for all platforms
-//            api(libs.koin.core)
-            implementation(libs.koin.core)
+            api(libs.koin.core)
+//            implementation(libs.koin.core)
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.viewmodel)
+
             implementation(libs.lifecycle.viewmodel)
             implementation(libs.navigation.compose)
+
+            //ktor
+            api(libs.ktor.core)
+//            implementation(libs.ktor.core)
+            implementation(libs.ktor.json)
+            implementation(libs.ktor.logging)
+            implementation(libs.ktor.negotiation)
+            implementation(libs.kotlinx.serialization.json)
 
             //common viewmodel
 //            implementation(libs.lifecycle.viewmodel.compose)
@@ -97,6 +109,9 @@ kotlin {
 
             implementation(libs.kotlinx.coroutines.core) // Needed for basic coroutine support
             implementation(libs.kotlinx.coroutines.swing) // Needed for Swing-specific coroutine support for desktop
+        }
+        iosMain.dependencies {
+            implementation(libs.ktor.client.darwin)
         }
     }
 }
