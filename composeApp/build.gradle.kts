@@ -10,6 +10,7 @@ plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.ksp)
     alias(libs.plugins.room)
+    alias(libs.plugins.kotlinx.serialization)
 }
 
 kotlin {
@@ -83,8 +84,8 @@ kotlin {
 
             //koin
             // if use api in common instead of implementation than do not have to implement it for all platforms
-            api(libs.koin.core)
-//            implementation(libs.koin.core)
+//            api(libs.koin.core)
+            implementation(libs.koin.core)
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.viewmodel)
 
@@ -92,8 +93,8 @@ kotlin {
             implementation(libs.navigation.compose)
 
             //ktor
-            api(libs.ktor.core)
-//            implementation(libs.ktor.core)
+//            api(libs.ktor.core)
+            implementation(libs.ktor.core)
             implementation(libs.ktor.json)
             implementation(libs.ktor.logging)
             implementation(libs.ktor.negotiation)
