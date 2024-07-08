@@ -1,4 +1,5 @@
 package id.slavnt.composemp.data.remote.dt_object
+import id.slavnt.composemp.domain.models.MovieMainItem
 import kotlinx.serialization.Serializable
 
 import kotlinx.serialization.SerialName
@@ -46,4 +47,11 @@ data class Movie(
     val voteAverage: Double,
     @SerialName("vote_count")
     val voteCount: Int
+)
+
+fun Movie.toMovieItem(): MovieMainItem = MovieMainItem(
+    id = id,
+    title = title,
+    posterPath = posterPath,
+    voteAverage = voteAverage
 )

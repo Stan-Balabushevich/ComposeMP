@@ -1,3 +1,4 @@
+import com.android.build.gradle.internal.scope.ProjectInfo.Companion.getBaseName
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
@@ -11,6 +12,7 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.room)
     alias(libs.plugins.kotlinx.serialization)
+    alias(libs.plugins.org.openjfx.javafxplugin)
 }
 
 kotlin {
@@ -100,6 +102,12 @@ kotlin {
             implementation(libs.ktor.negotiation)
             implementation(libs.kotlinx.serialization.json)
 
+            //coil
+            implementation(libs.coil.compose)
+            implementation(libs.coil.compose.core)
+            implementation(libs.coil.network.ktor)
+            implementation(libs.coil.mp)
+
             //common viewmodel
 //            implementation(libs.lifecycle.viewmodel.compose)
         }
@@ -110,11 +118,24 @@ kotlin {
 
             implementation(libs.kotlinx.coroutines.core) // Needed for basic coroutine support
             implementation(libs.kotlinx.coroutines.swing) // Needed for Swing-specific coroutine support for desktop
+
+            // to play video
+            implementation(libs.openjfx.controls)
+            implementation(libs.openjfx.graphics)
+            implementation(libs.openjfx.web)
+
+            implementation(libs.ktor.client.okhttp)
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
+            implementation(libs.kotlinx.serialization.json)
         }
     }
+}
+
+javafx {
+    version = "22.0.1"
+    modules = listOf("javafx.controls", "javafx.graphics", "javafx.web")
 }
 
 android {
