@@ -34,7 +34,7 @@ kotlinx-serialization = "1.7.1"
 openjfx = "22.0.1"
 openjfx-plugin = "0.1.0"
 
-coil3 = "3.0.0-alpha07"
+coil3 = "3.0.0-alpha08"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }

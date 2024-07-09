@@ -1,14 +1,13 @@
 package id.slavnt.composemp.di
 
-import id.slavnt.composemp.domain.usecase.GetMoviesUseCase
+import id.slavnt.composemp.domain.usecase.GetPopMoviesUseCase
+import id.slavnt.composemp.domain.usecase.GetTopRatedMoviesUseCase
 import org.koin.dsl.module
 
 val domainModule = module {
 
+    factory { GetPopMoviesUseCase(repository = get()) }
 
-    factory {
-        GetMoviesUseCase(repository = get())
-    }
-
+    factory { GetTopRatedMoviesUseCase(repository = get()) }
 
 }

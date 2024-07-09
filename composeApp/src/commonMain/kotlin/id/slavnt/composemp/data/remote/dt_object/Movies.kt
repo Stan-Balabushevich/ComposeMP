@@ -6,48 +6,49 @@ import kotlinx.serialization.SerialName
 
 
 @Serializable
-data class MoviesPop(
+data class Movies(
     @SerialName("page")
-    val page: Int,
+    val page: Int = 0,
     @SerialName("results")
-    val results: List<Movie>,
+    val results: List<Movie> = emptyList(),
     @SerialName("total_pages")
-    val totalPages: Int,
+    val totalPages: Int = 0,
     @SerialName("total_results")
-    val totalResults: Int
+    val totalResults: Int = 0
 )
 
 @Serializable
 data class Movie(
     @SerialName("adult")
-    val adult: Boolean,
+    val adult: Boolean = false,
     @SerialName("backdrop_path")
-    val backdropPath: String,
+    val backdropPath: String = "",
     @SerialName("genre_ids")
-    val genreIds: List<Int>,
+    val genreIds: List<Int> = emptyList(),
     @SerialName("id")
-    val id: Int,
+    val id: Int = 0,
     @SerialName("original_language")
-    val originalLanguage: String,
+    val originalLanguage: String = "",
     @SerialName("original_title")
-    val originalTitle: String,
+    val originalTitle: String = "",
     @SerialName("overview")
-    val overview: String,
+    val overview: String = "",
     @SerialName("popularity")
-    val popularity: Double,
+    val popularity: Double = 0.0,
     @SerialName("poster_path")
-    val posterPath: String,
+    val posterPath: String = "",
     @SerialName("release_date")
-    val releaseDate: String,
+    val releaseDate: String = "",
     @SerialName("title")
-    val title: String,
+    val title: String = "",
     @SerialName("video")
-    val video: Boolean,
+    val video: Boolean = false,
     @SerialName("vote_average")
-    val voteAverage: Double,
+    val voteAverage: Double = 0.0,
     @SerialName("vote_count")
-    val voteCount: Int
+    val voteCount: Int = 0
 )
+
 
 fun Movie.toMovieItem(): MovieMainItem = MovieMainItem(
     id = id,
