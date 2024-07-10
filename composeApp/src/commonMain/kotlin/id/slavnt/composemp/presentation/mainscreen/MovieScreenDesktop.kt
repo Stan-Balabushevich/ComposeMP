@@ -24,14 +24,20 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import id.slavnt.composemp.common.Constants
 import id.slavnt.composemp.data.remote.dt_object.Movies
 import id.slavnt.composemp.data.remote.dt_object.toMovieItem
 import id.slavnt.composemp.domain.models.MovieMainItem
+import id.slavnt.composemp.presentation.navigation.Screen
 import org.koin.compose.koinInject
 
 
 @Composable
-fun MovieScreenDesktop(viewModel: MainScreenViewModel = koinInject()) {
+fun MovieScreenDesktop(
+    viewModel: MainScreenViewModel = koinInject(),
+    navController: NavController
+) {
     var searchQuery by remember { mutableStateOf("") }
 
     val popularMovies by viewModel.popularMovies.collectAsState()
@@ -59,14 +65,16 @@ fun MovieScreenDesktop(viewModel: MainScreenViewModel = koinInject()) {
                 sectionData = popularMovies,
                 modifier = Modifier.weight(1f),
                 onNextPage = { viewModel.loadNextPopularPage() },
-                onPreviousPage = { viewModel.loadPreviousPopularPage() }
+                onPreviousPage = { viewModel.loadPreviousPopularPage() },
+                navController = navController
             )
             MovieSectionDesktop(
                 title = "Top Rated Movies",
                 sectionData = topRatedMovies,
                 modifier = Modifier.weight(1f),
                 onNextPage = { viewModel.loadNextTopRatedPage() },
-                onPreviousPage = { viewModel.loadPreviousTopRatedPage() }
+                onPreviousPage = { viewModel.loadPreviousTopRatedPage() },
+                navController = navController
             )
         }
     }
@@ -78,7 +86,8 @@ fun MovieSectionDesktop(
     sectionData: Movies,
     onNextPage: () -> Unit,
     onPreviousPage: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    navController: NavController
 ) {
     Column(modifier = modifier) {
         Text(
@@ -119,7 +128,12 @@ fun MovieSectionDesktop(
                 MovieItem(
                     movie = movie.toMovieItem(),
                     columnModifier = Modifier.width(300.dp),
-                    imageModifier = Modifier.height(400.dp)
+                    imageModifier = Modifier.height(400.dp),
+                    onItemClick = { movieDetail ->
+                        navController.navigate(
+                            Screen.MovieDetailScreen.route
+                                    + "?${Constants.MOVIE_ID}=${movieDetail.id}")
+                    }
                 )
             }
         }

@@ -1,6 +1,7 @@
 package id.slavnt.composemp.presentation.mainscreen
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -34,15 +35,22 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import coil3.compose.AsyncImagePainter
+import id.slavnt.composemp.common.Constants
+import id.slavnt.composemp.common.Constants.BASE_IMAGE_URL
 import id.slavnt.composemp.data.remote.dt_object.Movies
 import id.slavnt.composemp.data.remote.dt_object.toMovieItem
 import id.slavnt.composemp.domain.models.MovieMainItem
+import id.slavnt.composemp.presentation.navigation.Screen
 import org.koin.compose.koinInject
 
 @Composable
-fun MovieScreenMobile(viewModel: MainScreenViewModel = koinInject()) {
+fun MovieScreenMobile(
+    viewModel: MainScreenViewModel = koinInject(),
+    navController: NavController
+) {
     var searchQuery by remember { mutableStateOf("") }
 
     val popularMovies by viewModel.popularMovies.collectAsState()
@@ -68,7 +76,7 @@ fun MovieScreenMobile(viewModel: MainScreenViewModel = koinInject()) {
                     viewModel.loadNextPopularPage()
                 }, onPreviousPage = {
                     viewModel.loadPreviousPopularPage()
-                })
+                }, navController = navController)
             }
 
             item {
@@ -80,7 +88,7 @@ fun MovieScreenMobile(viewModel: MainScreenViewModel = koinInject()) {
                     viewModel.loadNextTopRatedPage()
                 }, onPreviousPage = {
                     viewModel.loadPreviousTopRatedPage()
-                })
+                }, navController = navController)
             }
 
         }
@@ -115,7 +123,8 @@ fun MovieSectionMobile(title: String,
                        sectionData: Movies,
                        onNextPage: () -> Unit,
                        onPreviousPage: () -> Unit,
-                       modifier: Modifier = Modifier) {
+                       modifier: Modifier = Modifier,
+                       navController: NavController) {
     Column {
         Text(text = title, style = MaterialTheme.typography.h6)
         Spacer(modifier = Modifier.height(8.dp))
@@ -143,7 +152,12 @@ fun MovieSectionMobile(title: String,
                 MovieItem(
                     movie = it.toMovieItem(),
                     columnModifier = Modifier.width(100.dp),
-                    imageModifier = Modifier.height(150.dp)
+                    imageModifier = Modifier.height(150.dp),
+                    onItemClick = { movie ->
+                        navController.navigate(
+                            Screen.MovieDetailScreen.route
+                                    + "?${Constants.MOVIE_ID}=${movie.id}")
+                    }
                 )
             }
 
@@ -153,7 +167,7 @@ fun MovieSectionMobile(title: String,
 
 @Composable
 fun CategoriesSection(movies: Movies,onNextPage: () -> Unit,
-                      onPreviousPage: () -> Unit,) {
+                      onPreviousPage: () -> Unit, navController: NavController) {
     Column {
         Text(text = "Categories", style = MaterialTheme.typography.h6)
         Spacer(modifier = Modifier.height(8.dp))
@@ -167,19 +181,27 @@ fun CategoriesSection(movies: Movies,onNextPage: () -> Unit,
             onNextPage()
         }, onPreviousPage = {
             onPreviousPage()
-        })
+        } , navController = navController)
     }
 }
 
 @Composable
-fun MovieItem(movie: MovieMainItem, columnModifier: Modifier = Modifier, imageModifier: Modifier = Modifier) {
-    val baseUrl = "https://image.tmdb.org/t/p/w500"
-    val fullPosterUrl = "$baseUrl${movie.posterPath}"
+fun MovieItem(
+    movie: MovieMainItem,
+    columnModifier: Modifier = Modifier,
+    imageModifier: Modifier = Modifier,
+    onItemClick: (MovieMainItem) -> Unit
+) {
+//    val baseUrl = "https://image.tmdb.org/t/p/w500"
+    val fullPosterUrl = "$BASE_IMAGE_URL${movie.posterPath}"
 
     var imageState by remember { mutableStateOf<AsyncImagePainter.State>(AsyncImagePainter.State.Empty) }
 
     Column(
         modifier = columnModifier
+            .clickable{
+                onItemClick(movie)
+            },
     ) {
         AsyncImage(
             model = fullPosterUrl,

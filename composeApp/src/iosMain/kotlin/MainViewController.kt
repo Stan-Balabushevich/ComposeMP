@@ -1,6 +1,6 @@
 import androidx.compose.ui.window.ComposeUIViewController
 import id.slavnt.composemp.di.initKoin
-import id.slavnt.composemp.presentation.mainscreen.MovieScreenMobile
+import id.slavnt.composemp.presentation.navigation.NavigationMobile
 
 fun MainViewController() = ComposeUIViewController(
                       configure = {
@@ -8,7 +8,7 @@ fun MainViewController() = ComposeUIViewController(
                       }
 ) {
     MyComposeAppTheme {
-        MovieScreenMobile()
+        NavigationMobile()
     }
 
 }

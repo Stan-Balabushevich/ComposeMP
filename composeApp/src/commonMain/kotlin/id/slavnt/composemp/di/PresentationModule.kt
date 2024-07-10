@@ -3,7 +3,9 @@ package id.slavnt.composemp.di
 import org.koin.compose.viewmodel.dsl.viewModelOf
 import org.koin.dsl.module
 import id.slavnt.composemp.presentation.AppViewModel
+import id.slavnt.composemp.presentation.detailscreen.DetailMovieViewModel
 import id.slavnt.composemp.presentation.mainscreen.MainScreenViewModel
+import org.koin.compose.viewmodel.dsl.viewModel
 
 
 val presentationModule = module {
@@ -17,8 +19,11 @@ val presentationModule = module {
 //    }
     viewModelOf(::MainScreenViewModel)
 
+
+    viewModelOf(::DetailMovieViewModel)
+
 //   viewModel {
-//       MainScreenViewModel(getMoviesUseCase = get())
+//       DetailMovieViewModel(get())
 //   }
 
 }

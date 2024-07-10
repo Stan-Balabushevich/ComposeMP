@@ -4,7 +4,7 @@ import MyComposeAppTheme
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import id.slavnt.composemp.presentation.mainscreen.MovieScreenMobile
+import id.slavnt.composemp.presentation.navigation.NavigationMobile
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -12,7 +12,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             MyComposeAppTheme {
-                MovieScreenMobile()
+                NavigationMobile()
             }
         }
     }

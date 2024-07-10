@@ -1,7 +1,8 @@
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
+import androidx.navigation.compose.rememberNavController
 import id.slavnt.composemp.di.initKoin
-import id.slavnt.composemp.presentation.mainscreen.MovieScreenDesktop
+import id.slavnt.composemp.presentation.navigation.NavigationDesktop
 
 fun main() = application {
 
@@ -11,10 +12,8 @@ fun main() = application {
         onCloseRequest = ::exitApplication,
         title = "ComposeMP",
     ) {
-
         MyComposeAppTheme {
-            MovieScreenDesktop()
+            NavigationDesktop()
         }
-
     }
 }
