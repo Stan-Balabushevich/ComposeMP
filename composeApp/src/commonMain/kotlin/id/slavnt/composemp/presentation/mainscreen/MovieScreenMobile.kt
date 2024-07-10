@@ -10,11 +10,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.LocalTextStyle
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -40,7 +42,7 @@ import id.slavnt.composemp.domain.models.MovieMainItem
 import org.koin.compose.koinInject
 
 @Composable
-fun MovieScreen(viewModel: MainScreenViewModel = koinInject()) {
+fun MovieScreenMobile(viewModel: MainScreenViewModel = koinInject()) {
     var searchQuery by remember { mutableStateOf("") }
 
     val popularMovies by viewModel.popularMovies.collectAsState()
@@ -57,17 +59,31 @@ fun MovieScreen(viewModel: MainScreenViewModel = koinInject()) {
             onSearch = { /* Handle search */ }
         )
         Spacer(modifier = Modifier.height(16.dp))
-        MovieSection(title = "Popular Movies", sectionData = popularMovies, onNextPage = {
-            viewModel.loadNextPopularPage()
-        }, onPreviousPage = {
-            viewModel.loadPreviousPopularPage()
-        })
-        Spacer(modifier = Modifier.height(16.dp))
-        CategoriesSection(topRatedMovies, onNextPage = {
-            viewModel.loadNextTopRatedPage()
-        }, onPreviousPage = {
-            viewModel.loadPreviousTopRatedPage()
-        })
+
+        LazyColumn (
+            modifier = Modifier.fillMaxSize()
+        ){
+            item {
+                MovieSectionMobile(title = "Popular Movies", sectionData = popularMovies, onNextPage = {
+                    viewModel.loadNextPopularPage()
+                }, onPreviousPage = {
+                    viewModel.loadPreviousPopularPage()
+                })
+            }
+
+            item {
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+            item {
+
+                CategoriesSection(topRatedMovies, onNextPage = {
+                    viewModel.loadNextTopRatedPage()
+                }, onPreviousPage = {
+                    viewModel.loadPreviousTopRatedPage()
+                })
+            }
+
+        }
     }
 }
 
@@ -95,14 +111,22 @@ fun SearchBar(query: String, onQueryChanged: (String) -> Unit, onSearch: () -> U
 }
 
 @Composable
-fun MovieSection(title: String,
-                 sectionData: Movies,
-                 onNextPage: () -> Unit,
-                 onPreviousPage: () -> Unit,
-                 modifier: Modifier = Modifier) {
+fun MovieSectionMobile(title: String,
+                       sectionData: Movies,
+                       onNextPage: () -> Unit,
+                       onPreviousPage: () -> Unit,
+                       modifier: Modifier = Modifier) {
     Column {
         Text(text = title, style = MaterialTheme.typography.h6)
         Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = "Page ${sectionData.page} of ${sectionData.totalPages}",
+            style = MaterialTheme.typography.body2
+        )
+        Text(
+            text = "Total Results: ${sectionData.totalResults}",
+            style = MaterialTheme.typography.body2
+        )
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
@@ -139,7 +163,7 @@ fun CategoriesSection(movies: Movies,onNextPage: () -> Unit,
             // Add more categories as needed
         }
         Spacer(modifier = Modifier.height(8.dp))
-        MovieSection(title = "Top Rated Movies", sectionData = movies, onNextPage = {
+        MovieSectionMobile(title = "Top Rated Movies", sectionData = movies, onNextPage = {
             onNextPage()
         }, onPreviousPage = {
             onPreviousPage()

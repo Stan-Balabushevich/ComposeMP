@@ -21,6 +21,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import id.slavnt.composemp.data.remote.dt_object.Movies
@@ -112,6 +113,7 @@ fun MovieSectionDesktop(
                 .fillMaxWidth()
                 .fillMaxHeight(),
             verticalArrangement = Arrangement.spacedBy(22.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             items(sectionData.results) { movie ->
                 MovieItem(

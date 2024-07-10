@@ -11,9 +11,10 @@ fun main() = application {
         onCloseRequest = ::exitApplication,
         title = "ComposeMP",
     ) {
-//        App()
 
-//        MovieScreen()
-        MovieScreenDesktop()
+        MyComposeAppTheme {
+            MovieScreenDesktop()
+        }
+
     }
 }
