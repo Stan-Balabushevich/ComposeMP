@@ -1,4 +1,5 @@
 package id.slavnt.composemp.data.remote.dt_object
+import id.slavnt.composemp.domain.models.MovieVideoModel
 import kotlinx.serialization.Serializable
 
 import kotlinx.serialization.SerialName
@@ -35,3 +36,17 @@ data class Video(
     @SerialName("type")
     val type: String
 )
+
+fun Video.toMovieVideoModel(): MovieVideoModel =
+    MovieVideoModel(
+        id = id,
+        iso31661 = iso31661,
+        iso6391 = iso6391,
+        key = key,
+        name = name,
+        official = official,
+        publishedAt = publishedAt,
+        site = site,
+        size = size,
+        type = type
+    )

@@ -1,5 +1,7 @@
 package id.slavnt.composemp.data.remote
 
+import id.slavnt.composemp.data.remote.dt_object.Movie
+import id.slavnt.composemp.data.remote.dt_object.MovieCredits
 import id.slavnt.composemp.data.remote.dt_object.MovieDetail
 import id.slavnt.composemp.data.remote.dt_object.MovieReviews
 import id.slavnt.composemp.data.remote.dt_object.MovieVideos
@@ -23,6 +25,11 @@ class MovieApiServiceImpl(private val client: HttpClient) : MovieApiService {
             parameter("page", page)
         }.body()
 
+    override suspend fun getLatestMovie(): Movie =
+        client.get("https://api.themoviedb.org/3/movie/latest") {
+            parameter("api_key", API_KEY)
+        }.body()
+
 
     override suspend fun getMovieDetail(movieId: Int): MovieDetail =
         client.get("https://api.themoviedb.org/3/movie/$movieId") {
@@ -39,9 +46,16 @@ class MovieApiServiceImpl(private val client: HttpClient) : MovieApiService {
             parameter("api_key", API_KEY)
         }.body()
 
+    override suspend fun getMovieCredits(movieId: Int): MovieCredits =
+        client.get("https://api.themoviedb.org/3/movie/$movieId/credits") {
+            parameter("api_key", API_KEY)
+        }.body()
+
+
 
     companion object{
         const val API_KEY = "ea26e379f31bca18b471e0a75959095c"
+        const val BASE_MOVIE_URL = "https://api.themoviedb.org/3/movie/"
     }
 
 }
