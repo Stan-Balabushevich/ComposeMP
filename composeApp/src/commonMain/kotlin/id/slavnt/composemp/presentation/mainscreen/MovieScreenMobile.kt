@@ -43,18 +43,17 @@ import id.slavnt.composemp.data.remote.dt_object.Movies
 import id.slavnt.composemp.data.remote.dt_object.toMovieItem
 import id.slavnt.composemp.domain.models.MovieMainItem
 import id.slavnt.composemp.presentation.navigation.Screen
-import org.koin.compose.koinInject
 
 @Composable
 fun MovieScreenMobile(
-    viewModel: MainScreenViewModel = koinInject(),
+    viewModel: MainScreenViewModel,
     navController: NavController
 ) {
-    var searchQuery by remember { mutableStateOf("") }
+    val searchQuery by viewModel.searchQuery.collectAsState()
 
     val popularMovies by viewModel.popularMovies.collectAsState()
     val topRatedMovies by viewModel.topRatedMovies.collectAsState()
-
+    val searchResult by viewModel.searchResult.collectAsState()
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -62,34 +61,48 @@ fun MovieScreenMobile(
     ) {
         SearchBar(
             query = searchQuery,
-            onQueryChanged = { searchQuery = it },
-            onSearch = { /* Handle search */ }
+            onQueryChanged = { viewModel.setSearchQuery(it) },
+            onSearch = { viewModel.onSearchQueryChanged(searchQuery,1) }
         )
         Spacer(modifier = Modifier.height(16.dp))
 
         LazyColumn (
             modifier = Modifier.fillMaxSize()
         ){
-            item {
-                MovieSectionMobile(title = "Popular Movies", sectionData = popularMovies, onNextPage = {
-                    viewModel.loadNextPopularPage()
-                }, onPreviousPage = {
-                    viewModel.loadPreviousPopularPage()
-                }, navController = navController)
-            }
 
-            item {
-                Spacer(modifier = Modifier.height(16.dp))
-            }
-            item {
+            if (searchQuery.isNotEmpty() && searchResult.results.isNotEmpty()) {
 
-                CategoriesSection(topRatedMovies, onNextPage = {
-                    viewModel.loadNextTopRatedPage()
-                }, onPreviousPage = {
-                    viewModel.loadPreviousTopRatedPage()
-                }, navController = navController)
-            }
+                item {
+                    MovieSectionMobile(title = "Search Results", sectionData = searchResult, onNextPage = {
+                        viewModel.loadNextSearchPage(searchQuery)
+                    }, onPreviousPage = {
+                        viewModel.loadPreviousSearchPage(searchQuery)
+                    }, navController = navController)
+                }
 
+
+            } else{
+
+                item {
+                    MovieSectionMobile(title = "Popular Movies", sectionData = popularMovies, onNextPage = {
+                        viewModel.loadNextPopularPage()
+                    }, onPreviousPage = {
+                        viewModel.loadPreviousPopularPage()
+                    }, navController = navController)
+                }
+
+                item {
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
+                item {
+
+                    CategoriesSection(topRatedMovies, onNextPage = {
+                        viewModel.loadNextTopRatedPage()
+                    }, onPreviousPage = {
+                        viewModel.loadPreviousTopRatedPage()
+                    }, navController = navController)
+                }
+            }
         }
     }
 }
@@ -103,7 +116,7 @@ fun SearchBar(query: String, onQueryChanged: (String) -> Unit, onSearch: () -> U
             .fillMaxWidth()
             .height(68.dp)
             .padding(start = 4.dp, top = 4.dp, bottom = 4.dp, end = 4.dp),
-        placeholder = { Text(text = "Search") },
+        placeholder = { Text(text = "Write text and press search or enter") },
         singleLine = true,
         keyboardActions = KeyboardActions(onSearch = { onSearch() }),
         keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Search),
@@ -118,12 +131,14 @@ fun SearchBar(query: String, onQueryChanged: (String) -> Unit, onSearch: () -> U
 }
 
 @Composable
-fun MovieSectionMobile(title: String,
-                       sectionData: Movies,
-                       onNextPage: () -> Unit,
-                       onPreviousPage: () -> Unit,
-                       modifier: Modifier = Modifier,
-                       navController: NavController) {
+fun MovieSectionMobile(
+    title: String,
+    sectionData: Movies,
+    onNextPage: () -> Unit,
+    onPreviousPage: () -> Unit,
+    modifier: Modifier = Modifier,
+    navController: NavController
+) {
     Column {
         Text(text = title, style = MaterialTheme.typography.h6)
         Spacer(modifier = Modifier.height(8.dp))

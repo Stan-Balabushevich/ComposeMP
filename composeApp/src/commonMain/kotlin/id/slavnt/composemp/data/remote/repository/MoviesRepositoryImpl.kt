@@ -6,8 +6,10 @@ import id.slavnt.composemp.data.remote.dt_object.MovieCredits
 import id.slavnt.composemp.data.remote.dt_object.MovieReviews
 import id.slavnt.composemp.data.remote.dt_object.Movies
 import id.slavnt.composemp.data.remote.dt_object.toMovieDetailModel
+import id.slavnt.composemp.data.remote.dt_object.toMovieItem
 import id.slavnt.composemp.data.remote.dt_object.toMovieVideoModel
 import id.slavnt.composemp.domain.models.MovieDetailModel
+import id.slavnt.composemp.domain.models.MovieMainItem
 import id.slavnt.composemp.domain.models.MovieVideoModel
 import id.slavnt.composemp.domain.repository.MoviesRepository
 import kotlinx.coroutines.flow.Flow
@@ -35,6 +37,34 @@ class MoviesRepositoryImpl(private val apiService: MovieApiService): MoviesRepos
 
         try {
             val movies = apiService.getTopRatedMovies(page)
+            emit(Resource.Success(movies))
+
+        } catch (e: Exception) {
+
+            emit(Resource.Error(e.message ?: "An error occurred"))
+
+        }
+    }
+
+    override suspend fun getLatestMovie(): Flow<Resource<MovieMainItem>> = flow {
+        emit(Resource.Loading())
+
+        try {
+            val movie = apiService.getLatestMovie()
+            emit(Resource.Success(movie.toMovieItem()))
+
+        } catch (e: Exception) {
+
+            emit(Resource.Error(e.message ?: "An error occurred"))
+
+        }
+    }
+
+    override suspend fun searchMovie(query: String, page: Int): Flow<Resource<Movies>> = flow {
+        emit(Resource.Loading())
+
+        try {
+            val movies = apiService.searchMovie(query,page)
             emit(Resource.Success(movies))
 
         } catch (e: Exception) {

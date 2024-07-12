@@ -32,12 +32,16 @@ import id.slavnt.composemp.common.Constants.BASE_IMAGE_URL
 import id.slavnt.composemp.domain.models.MovieDetailModel
 import id.slavnt.composemp.presentation.detailscreen.components.ClickableText
 import id.slavnt.composemp.presentation.detailscreen.components.VideoButton
+import id.slavnt.composemp.presentation.mainscreen.MainScreenViewModel
+import id.slavnt.composemp.presentation.navigation.Screen
 import org.koin.compose.koinInject
 
 @Composable
 fun MovieDetailScreen(
     movieId: Int,
     viewModel: DetailMovieViewModel = koinInject(),
+    // Both screens have to use same view model instance to retain state of search query and page number
+    viewModelMain: MainScreenViewModel,
     navController: NavController
 ) {
 
@@ -68,7 +72,21 @@ fun DetailScreen(movieDetail: MovieDetailModel,  navController: NavController) {
             .padding(16.dp)
     ) {
 
-        IconButton(onClick = { navController.popBackStack() }) {
+        IconButton(onClick = {
+            // To avoid popBackStack() to blank screen
+                if (navController.previousBackStackEntry != null) {
+                    navController.popBackStack()
+                } else {
+                    // Handle the case when there is no back stack entry
+                    // For example, navigate to a specific screen or show a message
+                    navController.navigate(Screen.MovieListScreen.route) {
+                        popUpTo(Screen.MovieListScreen.route) {
+                            inclusive = true
+                        }
+                    }
+                }
+            })
+        {
             Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
         }
         Spacer(modifier = Modifier.height(8.dp))
@@ -86,17 +104,16 @@ fun DetailScreen(movieDetail: MovieDetailModel,  navController: NavController) {
                 style = MaterialTheme.typography.h4,
                 modifier = Modifier.padding(bottom = 8.dp)
             ) }
-item {
 
-    SelectionContainer {
-        Text(
-            text = movieDetail.id.toString(),
-            style = MaterialTheme.typography.h4,
-            modifier = Modifier.padding(bottom = 8.dp)
-        ) }
-
-}
-
+            // can be deleted after testing
+            item {
+                SelectionContainer {
+                    Text(
+                        text = movieDetail.id.toString(),
+                        style = MaterialTheme.typography.h4,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    ) }
+            }
 
             item {
 

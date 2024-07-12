@@ -6,6 +6,9 @@ import id.slavnt.composemp.common.Resource
 import id.slavnt.composemp.data.remote.dt_object.Movies
 import id.slavnt.composemp.domain.usecase.GetPopMoviesUseCase
 import id.slavnt.composemp.domain.usecase.GetTopRatedMoviesUseCase
+import id.slavnt.composemp.domain.usecase.SearchMovieUseCase
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -13,8 +16,12 @@ import kotlinx.coroutines.launch
 
 class MainScreenViewModel(
     private val getPopMoviesUseCase: GetPopMoviesUseCase,
-    private val getTopRatedMoviesUseCase: GetTopRatedMoviesUseCase
+    private val getTopRatedMoviesUseCase: GetTopRatedMoviesUseCase,
+    private val searchMovieUseCase: SearchMovieUseCase
 ) : ViewModel() {
+
+    private val _searchQuery = MutableStateFlow("")
+    val searchQuery: StateFlow<String> = _searchQuery
 
     private val _popularMovies = MutableStateFlow(Movies())
     val popularMovies: StateFlow<Movies> = _popularMovies
@@ -22,10 +29,48 @@ class MainScreenViewModel(
     private val _topRatedMovies = MutableStateFlow(Movies())
     val topRatedMovies: StateFlow<Movies> = _topRatedMovies
 
+    private val _searchResult = MutableStateFlow(Movies())
+    val searchResult: StateFlow<Movies> = _searchResult
+
     init {
         fetchPopularMovies(1)
         fetchTopRatedMovies(1)
     }
+
+    fun setSearchQuery(query: String) {
+        _searchQuery.value = query
+    }
+
+    private var searchJob: Job? = null
+
+    fun onSearchQueryChanged(query: String, page: Int) {
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch {
+            delay(500)  // Debounce time
+            if (query.isNotBlank()) {
+
+                searchMovieUseCase.invoke(query, page).collect{ result ->
+                    when(result){
+                        is Resource.Error -> {
+                            println("Error: ${result.message}")
+                        }
+                        is Resource.Loading -> {}
+                        is Resource.Success -> {
+                            result.data?.let {
+                                _searchResult.value = Movies(
+                                    results = it.results,
+                                    page = it.page,
+                                    totalPages = it.totalPages,
+                                    totalResults = it.totalResults
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 
     private fun fetchPopularMovies(page: Int) {
         viewModelScope.launch {
@@ -45,7 +90,8 @@ class MainScreenViewModel(
                             )
                         }
                     }
-                }}
+                }
+            }
         }
     }
 
@@ -96,4 +142,21 @@ class MainScreenViewModel(
             fetchTopRatedMovies(currentPage - 1)
         }
     }
+
+    fun loadNextSearchPage(query: String) {
+        val currentPage = _searchResult.value.page
+        if (currentPage < _searchResult.value.totalPages) {
+            onSearchQueryChanged(query ,currentPage + 1)
+        }
+    }
+
+    fun loadPreviousSearchPage(query: String) {
+        val currentPage = _searchResult.value.page
+        if (currentPage > 1) {
+            onSearchQueryChanged(query ,currentPage - 1)
+        }
+    }
+
+
+
 }

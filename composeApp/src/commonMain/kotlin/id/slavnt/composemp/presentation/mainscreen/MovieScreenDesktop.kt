@@ -18,9 +18,6 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -28,20 +25,19 @@ import androidx.navigation.NavController
 import id.slavnt.composemp.common.Constants
 import id.slavnt.composemp.data.remote.dt_object.Movies
 import id.slavnt.composemp.data.remote.dt_object.toMovieItem
-import id.slavnt.composemp.domain.models.MovieMainItem
 import id.slavnt.composemp.presentation.navigation.Screen
-import org.koin.compose.koinInject
 
 
 @Composable
 fun MovieScreenDesktop(
-    viewModel: MainScreenViewModel = koinInject(),
+    viewModel: MainScreenViewModel,
     navController: NavController
 ) {
-    var searchQuery by remember { mutableStateOf("") }
+    val searchQuery by viewModel.searchQuery.collectAsState()
 
     val popularMovies by viewModel.popularMovies.collectAsState()
     val topRatedMovies by viewModel.topRatedMovies.collectAsState()
+    val searchResult by viewModel.searchResult.collectAsState()
 
     Column(
         modifier = Modifier
@@ -50,32 +46,47 @@ fun MovieScreenDesktop(
     ) {
         SearchBar(
             query = searchQuery,
-            onQueryChanged = { searchQuery = it },
-            onSearch = { /* Handle search */ }
+            onQueryChanged = { viewModel.setSearchQuery(it)  },
+            onSearch = { viewModel.onSearchQueryChanged(searchQuery,1) }
         )
         Spacer(modifier = Modifier.height(16.dp))
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
+
+        if (searchQuery.isNotEmpty() && searchResult.results.isNotEmpty()) {
+
             MovieSectionDesktop(
-                title = "Popular Movies",
-                sectionData = popularMovies,
+                title = "Search results",
+                sectionData = searchResult,
                 modifier = Modifier.weight(1f),
-                onNextPage = { viewModel.loadNextPopularPage() },
-                onPreviousPage = { viewModel.loadPreviousPopularPage() },
+                onNextPage = { viewModel.loadNextSearchPage(searchQuery) },
+                onPreviousPage = { viewModel.loadPreviousSearchPage(searchQuery) },
                 navController = navController
             )
-            MovieSectionDesktop(
-                title = "Top Rated Movies",
-                sectionData = topRatedMovies,
-                modifier = Modifier.weight(1f),
-                onNextPage = { viewModel.loadNextTopRatedPage() },
-                onPreviousPage = { viewModel.loadPreviousTopRatedPage() },
-                navController = navController
-            )
+
+        } else{
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                MovieSectionDesktop(
+                    title = "Popular Movies",
+                    sectionData = popularMovies,
+                    modifier = Modifier.weight(1f),
+                    onNextPage = { viewModel.loadNextPopularPage() },
+                    onPreviousPage = { viewModel.loadPreviousPopularPage() },
+                    navController = navController
+                )
+                MovieSectionDesktop(
+                    title = "Top Rated Movies",
+                    sectionData = topRatedMovies,
+                    modifier = Modifier.weight(1f),
+                    onNextPage = { viewModel.loadNextTopRatedPage() },
+                    onPreviousPage = { viewModel.loadPreviousTopRatedPage() },
+                    navController = navController
+                )
+            }
         }
     }
 }

@@ -15,6 +15,8 @@ interface MovieApiService {
 
     suspend fun getLatestMovie(): Movie
 
+    suspend fun searchMovie(query: String,page: Int): Movies
+
     suspend fun getMovieDetail(movieId: Int): MovieDetail
 
     suspend fun getMovieReviews(movieId: Int): MovieReviews

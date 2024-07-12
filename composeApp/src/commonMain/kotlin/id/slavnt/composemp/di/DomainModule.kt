@@ -5,6 +5,7 @@ import id.slavnt.composemp.domain.usecase.GetMovieReviewsUseCase
 import id.slavnt.composemp.domain.usecase.GetMovieVideosUseCase
 import id.slavnt.composemp.domain.usecase.GetPopMoviesUseCase
 import id.slavnt.composemp.domain.usecase.GetTopRatedMoviesUseCase
+import id.slavnt.composemp.domain.usecase.SearchMovieUseCase
 import org.koin.dsl.module
 
 val domainModule = module {
@@ -18,6 +19,8 @@ val domainModule = module {
     factory { GetMovieReviewsUseCase(repository = get()) }
 
     factory { GetMovieVideosUseCase(repository = get()) }
+
+    factory { SearchMovieUseCase(repository = get()) }
 
 
 

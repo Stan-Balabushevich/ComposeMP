@@ -30,6 +30,12 @@ class MovieApiServiceImpl(private val client: HttpClient) : MovieApiService {
             parameter("api_key", API_KEY)
         }.body()
 
+    override suspend fun searchMovie(query: String, page: Int): Movies  =
+    client.get("https://api.themoviedb.org/3/search/movie") {
+        parameter("api_key", API_KEY)
+        parameter("query", query)
+        parameter("page", page)
+    }.body()
 
     override suspend fun getMovieDetail(movieId: Int): MovieDetail =
         client.get("https://api.themoviedb.org/3/movie/$movieId") {
@@ -55,7 +61,7 @@ class MovieApiServiceImpl(private val client: HttpClient) : MovieApiService {
 
     companion object{
         const val API_KEY = "ea26e379f31bca18b471e0a75959095c"
-        const val BASE_MOVIE_URL = "https://api.themoviedb.org/3/movie/"
+        const val BASE_MOVIE_URL = "https://api.themoviedb.org/3/"
     }
 
 }

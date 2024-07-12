@@ -8,21 +8,17 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import id.slavnt.composemp.common.Constants
 import id.slavnt.composemp.presentation.detailscreen.MovieDetailScreen
+import id.slavnt.composemp.presentation.mainscreen.MainScreenViewModel
 import id.slavnt.composemp.presentation.mainscreen.MovieScreenDesktop
 import id.slavnt.composemp.presentation.mainscreen.MovieScreenMobile
-import kotlinx.serialization.Serializable
+import org.koin.compose.koinInject
 
-
-@Serializable
-object MainMovieScreen
-
-@Serializable
-data class DetailMovieScreen(
-    val id: String
-)
 
 @Composable
 fun NavigationMobile() {
+
+    // Both screens have to use same view model instance to retain state of search query and page number
+    val viewModel: MainScreenViewModel = koinInject()
 
     val navController = rememberNavController()
 
@@ -31,7 +27,7 @@ fun NavigationMobile() {
         startDestination = Screen.MovieListScreen.route
     ) {
         composable(route = Screen.MovieListScreen.route) {
-            MovieScreenMobile(navController = navController)
+            MovieScreenMobile(navController = navController, viewModel = viewModel)
         }
         composable(
             route = Screen.MovieDetailScreen.route + "?${Constants.MOVIE_ID}={${Constants.MOVIE_ID}}",
@@ -45,7 +41,7 @@ fun NavigationMobile() {
         ) {
 
             val movieId = it.arguments?.getInt(Constants.MOVIE_ID) ?: 0
-            MovieDetailScreen(movieId = movieId, navController = navController)
+            MovieDetailScreen(movieId = movieId, navController = navController, viewModelMain = viewModel)
 
         }
     }
@@ -55,6 +51,8 @@ fun NavigationMobile() {
 @Composable
 fun NavigationDesktop() {
 
+    val viewModel: MainScreenViewModel = koinInject()
+
     val navController = rememberNavController()
 
     NavHost(
@@ -62,7 +60,7 @@ fun NavigationDesktop() {
         startDestination = Screen.MovieListScreen.route
     ) {
         composable(route = Screen.MovieListScreen.route) {
-            MovieScreenDesktop(navController = navController)
+            MovieScreenDesktop(navController = navController, viewModel = viewModel)
         }
 
         composable(
@@ -77,7 +75,7 @@ fun NavigationDesktop() {
         ) {
 
             val movieId = it.arguments?.getInt(Constants.MOVIE_ID) ?: 0
-            MovieDetailScreen(movieId = movieId, navController = navController)
+            MovieDetailScreen(movieId = movieId, navController = navController, viewModelMain = viewModel)
 
         }
     }
