@@ -25,6 +25,8 @@ import androidx.navigation.NavController
 import id.slavnt.composemp.common.Constants
 import id.slavnt.composemp.data.remote.dt_object.Movies
 import id.slavnt.composemp.data.remote.dt_object.toMovieItem
+import id.slavnt.composemp.presentation.mainscreen.components.MovieItem
+import id.slavnt.composemp.presentation.mainscreen.components.SearchBar
 import id.slavnt.composemp.presentation.navigation.Screen
 
 
@@ -37,6 +39,7 @@ fun MovieScreenDesktop(
 
     val popularMovies by viewModel.popularMovies.collectAsState()
     val topRatedMovies by viewModel.topRatedMovies.collectAsState()
+    val upcomingMovies by viewModel.upcomingMovies.collectAsState()
     val searchResult by viewModel.searchResult.collectAsState()
 
     Column(
@@ -86,6 +89,15 @@ fun MovieScreenDesktop(
                     onPreviousPage = { viewModel.loadPreviousTopRatedPage() },
                     navController = navController
                 )
+                MovieSectionDesktop(
+                    title = "Upcoming Movies",
+                    sectionData = upcomingMovies,
+                    modifier = Modifier.weight(1f),
+                    onNextPage = { viewModel.loadNextUpcomingPage() },
+                    onPreviousPage = { viewModel.loadPreviousUpcomingPage() },
+                    navController = navController
+                )
+
             }
         }
     }

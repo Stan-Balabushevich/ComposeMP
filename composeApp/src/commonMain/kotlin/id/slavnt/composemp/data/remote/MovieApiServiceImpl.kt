@@ -3,6 +3,7 @@ package id.slavnt.composemp.data.remote
 import id.slavnt.composemp.data.remote.dt_object.Movie
 import id.slavnt.composemp.data.remote.dt_object.MovieCredits
 import id.slavnt.composemp.data.remote.dt_object.MovieDetail
+import id.slavnt.composemp.data.remote.dt_object.MovieImages
 import id.slavnt.composemp.data.remote.dt_object.MovieReviews
 import id.slavnt.composemp.data.remote.dt_object.MovieVideos
 import id.slavnt.composemp.data.remote.dt_object.Movies
@@ -14,54 +15,63 @@ import io.ktor.client.request.get
 class MovieApiServiceImpl(private val client: HttpClient) : MovieApiService {
 
     override suspend fun getPopMovies(page: Int): Movies =
-        client.get("https://api.themoviedb.org/3/movie/popular") {
+        client.get("$BASE_MOVIE_URL/movie/popular") {
             parameter("api_key", API_KEY)
             parameter("page", page)
         }.body()
 
     override suspend fun getTopRatedMovies(page: Int): Movies =
-        client.get("https://api.themoviedb.org/3/movie/top_rated") {
+        client.get("$BASE_MOVIE_URL/movie/top_rated") {
+            parameter("api_key", API_KEY)
+            parameter("page", page)
+        }.body()
+
+    override suspend fun getUpcomingMovies(page: Int): Movies  =
+        client.get("$BASE_MOVIE_URL/movie/upcoming") {
             parameter("api_key", API_KEY)
             parameter("page", page)
         }.body()
 
     override suspend fun getLatestMovie(): Movie =
-        client.get("https://api.themoviedb.org/3/movie/latest") {
+        client.get("$BASE_MOVIE_URL/movie/latest") {
             parameter("api_key", API_KEY)
         }.body()
 
     override suspend fun searchMovie(query: String, page: Int): Movies  =
-    client.get("https://api.themoviedb.org/3/search/movie") {
+    client.get("$BASE_MOVIE_URL/search/movie") {
         parameter("api_key", API_KEY)
         parameter("query", query)
         parameter("page", page)
     }.body()
 
     override suspend fun getMovieDetail(movieId: Int): MovieDetail =
-        client.get("https://api.themoviedb.org/3/movie/$movieId") {
+        client.get("$BASE_MOVIE_URL/movie/$movieId") {
             parameter("api_key", API_KEY)
         }.body()
 
     override suspend fun getMovieReviews(movieId: Int): MovieReviews =
-        client.get("https://api.themoviedb.org/3/movie/$movieId/reviews") {
+        client.get("$BASE_MOVIE_URL/movie/$movieId/reviews") {
             parameter("api_key", API_KEY)
         }.body()
 
     override suspend fun getMovieVideos(movieId: Int): MovieVideos =
-        client.get("https://api.themoviedb.org/3/movie/$movieId/videos") {
+        client.get("$BASE_MOVIE_URL/movie/$movieId/videos") {
             parameter("api_key", API_KEY)
         }.body()
 
     override suspend fun getMovieCredits(movieId: Int): MovieCredits =
-        client.get("https://api.themoviedb.org/3/movie/$movieId/credits") {
+        client.get("$BASE_MOVIE_URL/movie/$movieId/credits") {
             parameter("api_key", API_KEY)
         }.body()
 
-
+    override suspend fun getMovieImages(movieId: Int): MovieImages =
+        client.get("$BASE_MOVIE_URL/movie/$movieId/images") {
+            parameter("api_key", API_KEY)
+        }.body()
 
     companion object{
         const val API_KEY = "ea26e379f31bca18b471e0a75959095c"
-        const val BASE_MOVIE_URL = "https://api.themoviedb.org/3/"
+        const val BASE_MOVIE_URL = "https://api.themoviedb.org/3"
     }
 
 }

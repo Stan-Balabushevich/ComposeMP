@@ -6,6 +6,7 @@ import id.slavnt.composemp.common.Resource
 import id.slavnt.composemp.data.remote.dt_object.Movies
 import id.slavnt.composemp.domain.usecase.GetPopMoviesUseCase
 import id.slavnt.composemp.domain.usecase.GetTopRatedMoviesUseCase
+import id.slavnt.composemp.domain.usecase.GetUpcomingMoviesUseCase
 import id.slavnt.composemp.domain.usecase.SearchMovieUseCase
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -17,7 +18,8 @@ import kotlinx.coroutines.launch
 class MainScreenViewModel(
     private val getPopMoviesUseCase: GetPopMoviesUseCase,
     private val getTopRatedMoviesUseCase: GetTopRatedMoviesUseCase,
-    private val searchMovieUseCase: SearchMovieUseCase
+    private val searchMovieUseCase: SearchMovieUseCase,
+    private val getUpcomingMoviesUseCase: GetUpcomingMoviesUseCase
 ) : ViewModel() {
 
     private val _searchQuery = MutableStateFlow("")
@@ -29,12 +31,16 @@ class MainScreenViewModel(
     private val _topRatedMovies = MutableStateFlow(Movies())
     val topRatedMovies: StateFlow<Movies> = _topRatedMovies
 
+    private val _upcomingMovies = MutableStateFlow(Movies())
+    val upcomingMovies: StateFlow<Movies> = _upcomingMovies
+
     private val _searchResult = MutableStateFlow(Movies())
     val searchResult: StateFlow<Movies> = _searchResult
 
     init {
         fetchPopularMovies(1)
         fetchTopRatedMovies(1)
+        fetchUpcomingMovies(1)
     }
 
     fun setSearchQuery(query: String) {
@@ -64,6 +70,29 @@ class MainScreenViewModel(
                                     totalResults = it.totalResults
                                 )
                             }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun fetchUpcomingMovies(page: Int) {
+        viewModelScope.launch {
+            getUpcomingMoviesUseCase.invoke(page).collect { result ->
+                when(result){
+                    is Resource.Error -> {
+                        println("Error: ${result.message}")
+                    }
+                    is Resource.Loading -> {}
+                    is Resource.Success -> {
+                        result.data?.let {
+                            _upcomingMovies.value = Movies(
+                                results = it.results,
+                                page = it.page,
+                                totalPages = it.totalPages,
+                                totalResults = it.totalResults
+                            )
                         }
                     }
                 }
@@ -140,6 +169,19 @@ class MainScreenViewModel(
         val currentPage = _topRatedMovies.value.page
         if (currentPage > 1) {
             fetchTopRatedMovies(currentPage - 1)
+        }
+    }
+    fun loadNextUpcomingPage() {
+        val currentPage = _upcomingMovies.value.page
+        if (currentPage < _upcomingMovies.value.totalPages) {
+            fetchUpcomingMovies(currentPage + 1)
+        }
+    }
+
+    fun loadPreviousUpcomingPage() {
+        val currentPage = _upcomingMovies.value.page
+        if (currentPage > 1) {
+            fetchUpcomingMovies(currentPage - 1)
         }
     }
 

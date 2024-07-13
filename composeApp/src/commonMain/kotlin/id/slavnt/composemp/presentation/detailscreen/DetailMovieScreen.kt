@@ -51,6 +51,9 @@ fun MovieDetailScreen(
 
 
     val movieDetail by viewModel.movieDetail.collectAsState()
+    val reviews by viewModel.movieReviews.collectAsState()
+    val cast by viewModel.movieCredits.collectAsState()
+    val images by viewModel.movieImages.collectAsState()
 
     movieDetail?.let { detail ->
         DetailScreen(movieDetail = detail, navController)

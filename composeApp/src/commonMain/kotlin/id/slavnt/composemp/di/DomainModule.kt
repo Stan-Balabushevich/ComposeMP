@@ -1,10 +1,13 @@
 package id.slavnt.composemp.di
 
 import id.slavnt.composemp.domain.usecase.GetMovieByIdUseCase
+import id.slavnt.composemp.domain.usecase.GetMovieCreditsUseCase
+import id.slavnt.composemp.domain.usecase.GetMovieImagesUseCase
 import id.slavnt.composemp.domain.usecase.GetMovieReviewsUseCase
 import id.slavnt.composemp.domain.usecase.GetMovieVideosUseCase
 import id.slavnt.composemp.domain.usecase.GetPopMoviesUseCase
 import id.slavnt.composemp.domain.usecase.GetTopRatedMoviesUseCase
+import id.slavnt.composemp.domain.usecase.GetUpcomingMoviesUseCase
 import id.slavnt.composemp.domain.usecase.SearchMovieUseCase
 import org.koin.dsl.module
 
@@ -21,6 +24,12 @@ val domainModule = module {
     factory { GetMovieVideosUseCase(repository = get()) }
 
     factory { SearchMovieUseCase(repository = get()) }
+
+    factory { GetUpcomingMoviesUseCase(repository = get()) }
+
+    factory { GetMovieImagesUseCase(repository = get()) }
+
+    factory { GetMovieCreditsUseCase(repository = get()) }
 
 
 

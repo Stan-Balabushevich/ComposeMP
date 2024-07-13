@@ -1,4 +1,5 @@
 package id.slavnt.composemp.data.remote.dt_object
+import id.slavnt.composemp.domain.models.MovieCastModel
 import kotlinx.serialization.Serializable
 
 import kotlinx.serialization.SerialName
@@ -67,3 +68,18 @@ data class Crew(
     @SerialName("profile_path")
     val profilePath: String = ""
 )
+
+fun Cast.toMovieCastModel(): MovieCastModel =
+    MovieCastModel(
+        castId = castId,
+        id = id,
+        creditId = creditId,
+        order = order,
+        name = name,
+        character = character,
+        profilePath = profilePath,
+        knownForDepartment = knownForDepartment,
+        originalName = originalName,
+        popularity = popularity,
+
+    )
