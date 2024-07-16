@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import id.slavnt.composemp.common.Constants
+import id.slavnt.composemp.presentation.detailscreen.fullimagescreen.FullScreenImage
 import id.slavnt.composemp.presentation.detailscreen.MovieDetailScreen
 import id.slavnt.composemp.presentation.mainscreen.MainScreenViewModel
 import id.slavnt.composemp.presentation.mainscreen.MovieScreenDesktop
@@ -77,6 +78,22 @@ fun NavigationDesktop() {
             val movieId = it.arguments?.getInt(Constants.MOVIE_ID) ?: 0
             MovieDetailScreen(movieId = movieId, navController = navController, viewModelMain = viewModel)
 
+        }
+
+        composable(
+            route = Screen.FullImageScreen.route + "?${Constants.BASE_IMAGE_URL}={${Constants.BASE_IMAGE_URL}}",
+            arguments = listOf(
+                navArgument(
+                    name = Constants.BASE_IMAGE_URL
+                ) {
+                    type = NavType.StringType
+                })
+        ) { backStackEntry ->
+
+            val imageUrl = backStackEntry.arguments?.getString(Constants.BASE_IMAGE_URL) ?: ""
+            FullScreenImage(imageUrl = imageUrl) {
+                navController.popBackStack()
+            }
         }
     }
 }

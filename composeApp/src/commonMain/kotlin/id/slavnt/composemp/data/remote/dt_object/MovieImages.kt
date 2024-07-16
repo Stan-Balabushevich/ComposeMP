@@ -78,3 +78,11 @@ fun Backdrop.toMovieImageModel(): MovieImageModel =
         height = height,
         aspectRatio = aspectRatio
     )
+
+fun Poster.toMovieImageModel(): MovieImageModel =
+    MovieImageModel(
+        filePath = filePath,
+        width = width,
+        height = height,
+        aspectRatio = aspectRatio
+    )

@@ -1,8 +1,10 @@
 package id.slavnt.composemp.presentation.detailscreen
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -18,6 +20,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalUriHandler
@@ -28,10 +33,17 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
+import id.slavnt.composemp.common.Constants
 import id.slavnt.composemp.common.Constants.BASE_IMAGE_URL
+import id.slavnt.composemp.domain.models.MovieCastModel
 import id.slavnt.composemp.domain.models.MovieDetailModel
+import id.slavnt.composemp.domain.models.MovieImageModel
+import id.slavnt.composemp.domain.models.ReviewModel
+import id.slavnt.composemp.presentation.detailscreen.components.CastDialog
 import id.slavnt.composemp.presentation.detailscreen.components.ClickableText
-import id.slavnt.composemp.presentation.detailscreen.components.VideoButton
+import id.slavnt.composemp.presentation.detailscreen.components.DialogButton
+import id.slavnt.composemp.presentation.detailscreen.components.ImagesDialog
+import id.slavnt.composemp.presentation.detailscreen.components.ReviewDialog
 import id.slavnt.composemp.presentation.mainscreen.MainScreenViewModel
 import id.slavnt.composemp.presentation.navigation.Screen
 import org.koin.compose.koinInject
@@ -51,12 +63,18 @@ fun MovieDetailScreen(
 
 
     val movieDetail by viewModel.movieDetail.collectAsState()
-    val reviews by viewModel.movieReviews.collectAsState()
+    val review by viewModel.movieReviews.collectAsState()
     val cast by viewModel.movieCredits.collectAsState()
     val images by viewModel.movieImages.collectAsState()
 
     movieDetail?.let { detail ->
-        DetailScreen(movieDetail = detail, navController)
+        DetailScreen(
+            movieDetail = detail,
+            navController = navController,
+            cast = cast,
+            images = images,
+            reviews = review?.reviews ?: emptyList()
+        )
     } ?: run {
         Text(text = "Loading...")
     }
@@ -65,9 +83,40 @@ fun MovieDetailScreen(
 }
 
 @Composable
-fun DetailScreen(movieDetail: MovieDetailModel,  navController: NavController) {
+fun DetailScreen(
+    movieDetail: MovieDetailModel,
+    navController: NavController,
+    cast: List<MovieCastModel> = emptyList(),
+    images: List<MovieImageModel> =emptyList(),
+    reviews: List<ReviewModel> = emptyList()
+) {
 
     val uriHandler = LocalUriHandler.current
+
+    var showImagesDialog by remember { mutableStateOf(false) }
+    var showCastDialog by remember { mutableStateOf(false) }
+    var showReviewDialog by remember { mutableStateOf(false) }
+
+    CastDialog(
+        showDialog = showCastDialog,
+        onDismiss = { showCastDialog = false },
+        cast = cast
+    )
+
+    ImagesDialog(
+        showDialog = showImagesDialog,
+        onDismiss = { showImagesDialog = false },
+        images = images,
+        onImageClick = { imageUrl ->
+            navController.navigate(Screen.FullImageScreen.route + "?${Constants.BASE_IMAGE_URL}=$imageUrl")
+        }
+    )
+
+    ReviewDialog(
+        showDialog = showReviewDialog,
+        onDismiss = { showReviewDialog = false },
+        reviews = reviews
+    )
 
     Column(
         modifier = Modifier
@@ -102,11 +151,29 @@ fun DetailScreen(movieDetail: MovieDetailModel,  navController: NavController) {
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.width(200.dp).height(300.dp),
             ) }
-            item { Text(
-                text = movieDetail.title,
-                style = MaterialTheme.typography.h4,
-                modifier = Modifier.padding(bottom = 8.dp)
-            ) }
+
+            item {
+
+                Row(modifier = Modifier.fillMaxWidth()) {
+
+                    DialogButton(text = "Cast", onClick = { showCastDialog = true })
+                    Spacer(modifier = Modifier.width(8.dp))
+                    DialogButton(text = "Images", onClick = { showImagesDialog = true })
+                    Spacer(modifier = Modifier.width(8.dp))
+                    DialogButton(text = "Reviews", onClick = { showReviewDialog = true })
+
+                }
+            }
+
+            item {
+                SelectionContainer {
+                    Text(
+                        text = movieDetail.title,
+                        style = MaterialTheme.typography.h4,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                }
+            }
 
             // can be deleted after testing
             item {
@@ -310,14 +377,19 @@ fun DetailScreen(movieDetail: MovieDetailModel,  navController: NavController) {
 
             }
 
-            item {
-                VideoButton(
-                    hasVideo = movieDetail.video,
-                    onClick = { /* Handle video button click */ }
-                )
-            }
+//            item {
+//                VideoButton(
+//                    hasVideo = true,
+////                    hasVideo = movieDetail.video,
+//                    onClick = {
+//                        showImagesDialog = true
+//                    }
+//                )
+//            }
+
 
         }
 
     }
+
 }

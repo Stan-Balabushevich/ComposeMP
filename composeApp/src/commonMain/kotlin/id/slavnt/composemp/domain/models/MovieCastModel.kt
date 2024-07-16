@@ -1,7 +1,5 @@
 package id.slavnt.composemp.domain.models
 
-import kotlinx.serialization.SerialName
-
 data class MovieCastModel (
     val castId: Int,
     val character: String,
