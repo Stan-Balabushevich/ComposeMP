@@ -4,5 +4,6 @@ data class MovieMainItem (
     val id: Int,
     val posterPath: String,
     val title: String,
-    val voteAverage: Double
+    val voteAverage: Double,
+    val favorite: Boolean = false
 )

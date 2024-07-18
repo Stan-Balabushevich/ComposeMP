@@ -3,14 +3,14 @@ package id.slavnt.composemp.data.local.database
 import android.content.Context
 import androidx.room.Room
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
-import id.slavnt.composemp.data.local.database.PeopleDatabase
 
-fun getPeopleDatabase(context: Context): PeopleDatabase {
+fun getMovieDatabase(context: Context): MovieDatabase {
     val dbFile = context.getDatabasePath("people.db")
-    return Room.databaseBuilder<PeopleDatabase>(
+    return Room.databaseBuilder<MovieDatabase>(
         context = context.applicationContext,
         name = dbFile.absolutePath
     )
+        .fallbackToDestructiveMigration(false)
         .setDriver(BundledSQLiteDriver())
         .build()
 }

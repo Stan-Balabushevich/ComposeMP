@@ -3,10 +3,15 @@ package id.slavnt.composemp.presentation.mainscreen
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import id.slavnt.composemp.common.Resource
-import id.slavnt.composemp.data.remote.dt_object.Movies
+import id.slavnt.composemp.domain.models.MovieMainItem
+import id.slavnt.composemp.domain.models.MoviesModel
+import id.slavnt.composemp.domain.usecase.AddFavoriteMovieUseCase
+import id.slavnt.composemp.domain.usecase.CheckFavoriteMovieUseCase
+import id.slavnt.composemp.domain.usecase.GetFavoritesMoviesUseCase
 import id.slavnt.composemp.domain.usecase.GetPopMoviesUseCase
 import id.slavnt.composemp.domain.usecase.GetTopRatedMoviesUseCase
 import id.slavnt.composemp.domain.usecase.GetUpcomingMoviesUseCase
+import id.slavnt.composemp.domain.usecase.RemoveFavoriteMovieUseCase
 import id.slavnt.composemp.domain.usecase.SearchMovieUseCase
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -19,33 +24,105 @@ class MainScreenViewModel(
     private val getPopMoviesUseCase: GetPopMoviesUseCase,
     private val getTopRatedMoviesUseCase: GetTopRatedMoviesUseCase,
     private val searchMovieUseCase: SearchMovieUseCase,
-    private val getUpcomingMoviesUseCase: GetUpcomingMoviesUseCase
+    private val getUpcomingMoviesUseCase: GetUpcomingMoviesUseCase,
+    private val checkFavoriteMovieUseCase: CheckFavoriteMovieUseCase,
+    private val addFavoriteMovieUseCase: AddFavoriteMovieUseCase,
+    private val removeFavoriteMovieUseCase: RemoveFavoriteMovieUseCase,
+    private val getFavoriteMoviesUseCase: GetFavoritesMoviesUseCase
 ) : ViewModel() {
 
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> = _searchQuery
 
-    private val _popularMovies = MutableStateFlow(Movies())
-    val popularMovies: StateFlow<Movies> = _popularMovies
+    private val _popularMovies = MutableStateFlow(MoviesModel())
+    val popularMovies: StateFlow<MoviesModel> = _popularMovies
 
-    private val _topRatedMovies = MutableStateFlow(Movies())
-    val topRatedMovies: StateFlow<Movies> = _topRatedMovies
+    private val _topRatedMovies = MutableStateFlow(MoviesModel())
+    val topRatedMovies: StateFlow<MoviesModel> = _topRatedMovies
 
-    private val _upcomingMovies = MutableStateFlow(Movies())
-    val upcomingMovies: StateFlow<Movies> = _upcomingMovies
+    private val _upcomingMovies = MutableStateFlow(MoviesModel())
+    val upcomingMovies: StateFlow<MoviesModel> = _upcomingMovies
 
-    private val _searchResult = MutableStateFlow(Movies())
-    val searchResult: StateFlow<Movies> = _searchResult
+    private val _searchResult = MutableStateFlow(MoviesModel())
+    val searchResult: StateFlow<MoviesModel> = _searchResult
+
+    private val _favoriteMovies = MutableStateFlow<List<MovieMainItem>>(emptyList())
+    val favoriteMovies: StateFlow<List<MovieMainItem>> = _favoriteMovies
+
 
     init {
         fetchPopularMovies(1)
         fetchTopRatedMovies(1)
         fetchUpcomingMovies(1)
+        fetchFavoriteMovies()
+    }
+
+    private fun fetchFavoriteMovies() {
+        viewModelScope.launch {
+            getFavoriteMoviesUseCase.invoke().collect { result ->
+                when(result){
+                    is Resource.Error -> {}
+                    is Resource.Loading -> {}
+                    is Resource.Success -> {
+                        result.data?.let {
+                            _favoriteMovies.value = it
+                        }
+                    }
+                }}
+        }
+    }
+
+    fun removeFavoriteMovie(movie: MovieMainItem) {
+        viewModelScope.launch {
+            removeFavoriteMovieUseCase(movie)
+            // Update the list in memory
+            _favoriteMovies.value = _favoriteMovies.value.filter { it.id != movie.id }
+        }
     }
 
     fun setSearchQuery(query: String) {
         _searchQuery.value = query
     }
+
+
+    fun toggleFavorite(movie: MovieMainItem) {
+        viewModelScope.launch {
+            val updatedMovie = movie.copy(favorite = !movie.favorite)
+            if (updatedMovie.favorite) {
+                addFavoriteMovieUseCase(updatedMovie)
+            } else {
+                removeFavoriteMovieUseCase(updatedMovie)
+            }
+            // Update the list in memory
+            _popularMovies.value = _popularMovies.value.let { moviesModel ->
+                val updatedMovies = moviesModel.results.map {
+                    if (it.id == movie.id) updatedMovie else it
+                }
+                moviesModel.copy(results = updatedMovies)
+            }
+            _topRatedMovies.value = _topRatedMovies.value.let { moviesModel ->
+                val updatedMovies = moviesModel.results.map {
+                    if (it.id == movie.id) updatedMovie else it
+                }
+                moviesModel.copy(results = updatedMovies)
+            }
+            _searchResult.value = _searchResult.value.let { moviesModel ->
+                val updatedMovies = moviesModel.results.map {
+                    if (it.id == movie.id) updatedMovie else it
+                }
+                moviesModel.copy(results = updatedMovies)
+            }
+            _upcomingMovies.value = _upcomingMovies.value.let { moviesModel ->
+                val updatedMovies = moviesModel.results.map {
+                    if (it.id == movie.id) updatedMovie else it
+                }
+                moviesModel.copy(results = updatedMovies)
+            }
+
+        }
+    }
+
+
 
     private var searchJob: Job? = null
 
@@ -63,7 +140,7 @@ class MainScreenViewModel(
                         is Resource.Loading -> {}
                         is Resource.Success -> {
                             result.data?.let {
-                                _searchResult.value = Movies(
+                                _searchResult.value = MoviesModel(
                                     results = it.results,
                                     page = it.page,
                                     totalPages = it.totalPages,
@@ -87,7 +164,7 @@ class MainScreenViewModel(
                     is Resource.Loading -> {}
                     is Resource.Success -> {
                         result.data?.let {
-                            _upcomingMovies.value = Movies(
+                            _upcomingMovies.value = MoviesModel(
                                 results = it.results,
                                 page = it.page,
                                 totalPages = it.totalPages,
@@ -110,12 +187,16 @@ class MainScreenViewModel(
                     }
                     is Resource.Loading -> {}
                     is Resource.Success -> {
-                        result.data?.let {
-                            _popularMovies.value = Movies(
-                                results = it.results,
-                                page = it.page,
-                                totalPages = it.totalPages,
-                                totalResults = it.totalResults
+                        result.data?.let { movieList ->
+                            val updatedMovies = movieList.results.map { movie ->
+                                val isFavorite = checkFavoriteMovieUseCase.invoke(movie.id)
+                                movie.copy(favorite = isFavorite)
+                            }
+                            _popularMovies.value = MoviesModel(
+                                results = updatedMovies,
+                                page = movieList.page,
+                                totalPages = movieList.totalPages,
+                                totalResults = movieList.totalResults
                             )
                         }
                     }
@@ -132,7 +213,7 @@ class MainScreenViewModel(
                     is Resource.Loading -> {}
                     is Resource.Success -> {
                         result.data?.let {
-                           _topRatedMovies.value = Movies(
+                           _topRatedMovies.value = MoviesModel(
                                 results = it.results,
                                 page = it.page,
                                 totalPages = it.totalPages,

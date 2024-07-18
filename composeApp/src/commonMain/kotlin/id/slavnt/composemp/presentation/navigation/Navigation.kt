@@ -9,6 +9,7 @@ import androidx.navigation.navArgument
 import id.slavnt.composemp.common.Constants
 import id.slavnt.composemp.presentation.detailscreen.fullimagescreen.FullScreenImage
 import id.slavnt.composemp.presentation.detailscreen.MovieDetailScreen
+import id.slavnt.composemp.presentation.favoritescreen.FavoriteMovieScreen
 import id.slavnt.composemp.presentation.mainscreen.MainScreenViewModel
 import id.slavnt.composemp.presentation.mainscreen.MovieScreenDesktop
 import id.slavnt.composemp.presentation.mainscreen.MovieScreenMobile
@@ -27,9 +28,15 @@ fun NavigationMobile() {
         navController = navController,
         startDestination = Screen.MovieListScreen.route
     ) {
+
         composable(route = Screen.MovieListScreen.route) {
             MovieScreenMobile(navController = navController, viewModel = viewModel)
         }
+
+        composable(route = Screen.FavoriteMovieScreen.route) {
+            FavoriteMovieScreen(navController = navController, viewModel = viewModel)
+        }
+
         composable(
             route = Screen.MovieDetailScreen.route + "?${Constants.MOVIE_ID}={${Constants.MOVIE_ID}}",
             arguments = listOf(
@@ -62,6 +69,12 @@ fun NavigationDesktop() {
     ) {
         composable(route = Screen.MovieListScreen.route) {
             MovieScreenDesktop(navController = navController, viewModel = viewModel)
+        }
+
+        composable(route = Screen.FavoriteMovieScreen.route) {
+
+            FavoriteMovieScreen(navController = navController, viewModel = viewModel)
+
         }
 
         composable(

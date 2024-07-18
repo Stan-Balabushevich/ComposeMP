@@ -1,15 +1,10 @@
 package id.slavnt.composemp.domain.models
 
-import id.slavnt.composemp.data.remote.dt_object.Genre
-import id.slavnt.composemp.data.remote.dt_object.ProductionCompany
-import id.slavnt.composemp.data.remote.dt_object.ProductionCountry
-import id.slavnt.composemp.data.remote.dt_object.SpokenLanguage
-
 data class MovieDetailModel(
     val adult: Boolean,
     val backdropPath: String,
     val budget: Int,
-    val genres: List<Genre>,
+    val genres: List<String>,
     val homepage: String,
     val id: Int,
     val imdbId: String,
@@ -19,16 +14,18 @@ data class MovieDetailModel(
     val overview: String,
     val popularity: Double,
     val posterPath: String,
-    val productionCompanies: List<ProductionCompany>,
-    val productionCountries: List<ProductionCountry>,
+    val productionCompanies: List<String>,
+    val productionCountries: List<String>,
     val releaseDate: String,
     val revenue: Int,
     val runtime: Int,
-    val spokenLanguages: List<SpokenLanguage>,
+    val spokenLanguages: List<String>,
     val status: String,
     val tagline: String,
     val title: String,
     val video: Boolean,
     val voteAverage: Double,
-    val voteCount: Int
+    val voteCount: Int,
+    val favorite: Boolean = false
 )
+

@@ -1,8 +1,10 @@
 package id.slavnt.composemp.presentation.detailscreen
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -16,6 +18,8 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -61,7 +65,6 @@ fun MovieDetailScreen(
         viewModel.setMovieId(movieId)
     }
 
-
     val movieDetail by viewModel.movieDetail.collectAsState()
     val review by viewModel.movieReviews.collectAsState()
     val cast by viewModel.movieCredits.collectAsState()
@@ -73,7 +76,10 @@ fun MovieDetailScreen(
             navController = navController,
             cast = cast,
             images = images,
-            reviews = review?.reviews ?: emptyList()
+            reviews = review?.reviews ?: emptyList(),
+            onFavoriteClick = {
+
+            }
         )
     } ?: run {
         Text(text = "Loading...")
@@ -87,8 +93,9 @@ fun DetailScreen(
     movieDetail: MovieDetailModel,
     navController: NavController,
     cast: List<MovieCastModel> = emptyList(),
-    images: List<MovieImageModel> =emptyList(),
-    reviews: List<ReviewModel> = emptyList()
+    images: List<MovieImageModel> = emptyList(),
+    reviews: List<ReviewModel> = emptyList(),
+    onFavoriteClick: () -> Unit
 ) {
 
     val uriHandler = LocalUriHandler.current
@@ -107,8 +114,9 @@ fun DetailScreen(
         showDialog = showImagesDialog,
         onDismiss = { showImagesDialog = false },
         images = images,
-        onImageClick = { imageUrl ->
-            navController.navigate(Screen.FullImageScreen.route + "?${Constants.BASE_IMAGE_URL}=$imageUrl")
+        onImageClick = {
+//            imageUrl ->
+//            navController.navigate(Screen.FullImageScreen.route + "?${Constants.BASE_IMAGE_URL}=$imageUrl")
         }
     )
 
@@ -124,8 +132,14 @@ fun DetailScreen(
             .padding(16.dp)
     ) {
 
-        IconButton(onClick = {
-            // To avoid popBackStack() to blank screen
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            IconButton(onClick = {
+                // To avoid popBackStack() to blank screen
                 if (navController.previousBackStackEntry != null) {
                     navController.popBackStack()
                 } else {
@@ -137,10 +151,23 @@ fun DetailScreen(
                         }
                     }
                 }
-            })
-        {
-            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+            }) {
+                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+            }
+
+
+            IconButton(onClick = {
+                onFavoriteClick()
+            }) {
+
+                Icon(
+                    imageVector = if (movieDetail.favorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
+                    contentDescription = if (movieDetail.favorite) "Remove from favorites" else "Add to favorites"
+                )
+            }
         }
+
+
         Spacer(modifier = Modifier.height(8.dp))
 
         LazyColumn(Modifier.fillMaxSize()) {
@@ -149,7 +176,9 @@ fun DetailScreen(
                 model = "$BASE_IMAGE_URL${movieDetail.posterPath}",
                 contentDescription = movieDetail.title,
                 contentScale = ContentScale.Crop,
-                modifier = Modifier.width(200.dp).height(300.dp),
+                modifier = Modifier
+                    .width(300.dp)
+                    .height(400.dp),
             ) }
 
             item {
@@ -183,6 +212,17 @@ fun DetailScreen(
                         style = MaterialTheme.typography.h4,
                         modifier = Modifier.padding(bottom = 8.dp)
                     ) }
+            }
+
+            item {
+
+                ClickableText(
+                    text = movieDetail.homepage,
+                    onClick = { movieDetail.homepage.let { uriHandler.openUri(it) } },
+                    style = MaterialTheme.typography.body1,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+
             }
 
             item {
@@ -236,7 +276,7 @@ fun DetailScreen(
                     withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
                         append("Genres: ")
                     }
-                    append(movieDetail.genres.joinToString(", ") { it.name })
+                    append(movieDetail.genres.joinToString(", "))
                 } ,
                 style = MaterialTheme.typography.body1,
                 modifier = Modifier.padding(bottom = 8.dp)
@@ -248,7 +288,7 @@ fun DetailScreen(
                         withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
                             append("Production Companies: ")
                         }
-                        append(movieDetail.productionCompanies.joinToString(", ") { it.name })
+                        append(movieDetail.productionCompanies.joinToString(", "))
                     } ,
                     style = MaterialTheme.typography.body1,
                     modifier = Modifier.padding(bottom = 8.dp)
@@ -261,7 +301,7 @@ fun DetailScreen(
                         withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
                             append("Production Countries: ")
                         }
-                        append(movieDetail.productionCountries.joinToString(", ") { it.name })
+                        append(movieDetail.productionCountries.joinToString(", ") )
                     }   ,
                     style = MaterialTheme.typography.body1,
                     modifier = Modifier.padding(bottom = 8.dp)
@@ -275,7 +315,7 @@ fun DetailScreen(
                         withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
                             append("Spoken Languages: ")
                         }
-                        append(movieDetail.spokenLanguages.joinToString(", ") { it.name })
+                        append(movieDetail.spokenLanguages.joinToString(", "))
                     }  ,
                     style = MaterialTheme.typography.body1,
                     modifier = Modifier.padding(bottom = 8.dp)
@@ -364,17 +404,6 @@ fun DetailScreen(
                     style = MaterialTheme.typography.body1,
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
-            }
-
-            item {
-
-                ClickableText(
-                    text = movieDetail.homepage,
-                    onClick = { movieDetail.homepage.let { uriHandler.openUri(it) } },
-                    style = MaterialTheme.typography.body1,
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
-
             }
 
 //            item {

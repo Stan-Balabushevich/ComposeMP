@@ -73,13 +73,21 @@ fun ReviewDialog(
                         }
                     }
 
-                    LazyColumn(
-                        modifier = Modifier
-                            .fillMaxSize(),
-                        verticalArrangement = Arrangement.spacedBy(22.dp)
-                    ) {
-                        items(reviews) { review ->
-                            ReviewItem(review)
+                    if (reviews.isEmpty()) {
+                        Text(
+                            text = "No reviews available.",
+                            style = MaterialTheme.typography.body1,
+                            modifier = Modifier.align(Alignment.CenterHorizontally)
+                        )
+                    } else{
+                        LazyColumn(
+                            modifier = Modifier
+                                .fillMaxSize(),
+                            verticalArrangement = Arrangement.spacedBy(22.dp)
+                        ) {
+                            items(reviews) { review ->
+                                ReviewItem(review)
+                            }
                         }
                     }
                 }

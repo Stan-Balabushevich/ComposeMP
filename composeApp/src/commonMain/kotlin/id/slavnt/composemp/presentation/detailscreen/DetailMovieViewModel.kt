@@ -10,11 +10,14 @@ import id.slavnt.composemp.domain.models.MovieDetailModel
 import id.slavnt.composemp.domain.models.MovieImageModel
 import id.slavnt.composemp.domain.models.MovieReviewModel
 import id.slavnt.composemp.domain.models.MovieVideoModel
+import id.slavnt.composemp.domain.usecase.AddFavoriteMovieUseCase
+import id.slavnt.composemp.domain.usecase.CheckFavoriteMovieUseCase
 import id.slavnt.composemp.domain.usecase.GetMovieByIdUseCase
 import id.slavnt.composemp.domain.usecase.GetMovieCreditsUseCase
 import id.slavnt.composemp.domain.usecase.GetMovieImagesUseCase
 import id.slavnt.composemp.domain.usecase.GetMovieReviewsUseCase
 import id.slavnt.composemp.domain.usecase.GetMovieVideosUseCase
+import id.slavnt.composemp.domain.usecase.RemoveFavoriteMovieUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -24,7 +27,10 @@ class DetailMovieViewModel(
     private val getMovieReviewsUseCase: GetMovieReviewsUseCase,
     private val getMovieVideosUseCase: GetMovieVideosUseCase,
     private val getMovieCreditsUseCase: GetMovieCreditsUseCase,
-    private val getMovieImagesUseCase: GetMovieImagesUseCase
+    private val getMovieImagesUseCase: GetMovieImagesUseCase,
+    private val checkFavoriteMovieUseCase: CheckFavoriteMovieUseCase,
+    private val addFavoriteMovieUseCase: AddFavoriteMovieUseCase,
+    private val removeFavoriteMovieUseCase: RemoveFavoriteMovieUseCase,
 ) : ViewModel() {
 
     private val _movieDetail = MutableStateFlow<MovieDetailModel?>(null)

@@ -3,7 +3,7 @@ package id.slavnt.composemp.presentation
 import BatteryManager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import id.slavnt.composemp.data.local.database.PeopleDatabase
+import id.slavnt.composemp.data.local.database.MovieDatabase
 import id.slavnt.composemp.data.local.database.db_object.Person
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
-class AppViewModel(private val db: PeopleDatabase, private val batteryManager: BatteryManager): ViewModel() {
+class AppViewModel(private val db: MovieDatabase, private val batteryManager: BatteryManager): ViewModel() {
 
     private val _personList = MutableStateFlow<List<Person>>(emptyList())
     val personList: StateFlow<List<Person>> = _personList

@@ -1,6 +1,9 @@
-package id.slavnt.composemp.data.remote.repository
+package id.slavnt.composemp.data.repository
 
 import id.slavnt.composemp.common.Resource
+import id.slavnt.composemp.data.local.database.MovieDatabase
+import id.slavnt.composemp.data.local.database.db_object.toMovieEntity
+import id.slavnt.composemp.data.local.database.db_object.toMovieItem
 import id.slavnt.composemp.data.remote.MovieApiService
 import id.slavnt.composemp.data.remote.dt_object.MovieReviews
 import id.slavnt.composemp.data.remote.dt_object.Movies
@@ -10,24 +13,30 @@ import id.slavnt.composemp.data.remote.dt_object.toMovieImageModel
 import id.slavnt.composemp.data.remote.dt_object.toMovieItem
 import id.slavnt.composemp.data.remote.dt_object.toMovieReviewsModel
 import id.slavnt.composemp.data.remote.dt_object.toMovieVideoModel
+import id.slavnt.composemp.data.remote.dt_object.toMoviesModel
 import id.slavnt.composemp.domain.models.MovieCastModel
 import id.slavnt.composemp.domain.models.MovieDetailModel
 import id.slavnt.composemp.domain.models.MovieImageModel
 import id.slavnt.composemp.domain.models.MovieMainItem
 import id.slavnt.composemp.domain.models.MovieReviewModel
 import id.slavnt.composemp.domain.models.MovieVideoModel
+import id.slavnt.composemp.domain.models.MoviesModel
 import id.slavnt.composemp.domain.repository.MoviesRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 
-class MoviesRepositoryImpl(private val apiService: MovieApiService): MoviesRepository {
+class MoviesRepositoryImpl(
+    private val apiService: MovieApiService,
+    private val db: MovieDatabase
+): MoviesRepository {
 
 
-    override suspend fun getPopMovies(page: Int): Flow<Resource<Movies>> = flow {
+    override suspend fun getPopMovies(page: Int): Flow<Resource<MoviesModel>> = flow {
         emit(Resource.Loading())
 
         try {
-            val movies = apiService.getPopMovies(page)
+            val movies = apiService.getPopMovies(page).toMoviesModel()
             emit(Resource.Success(movies))
 
     } catch (e: Exception) {
@@ -37,11 +46,11 @@ class MoviesRepositoryImpl(private val apiService: MovieApiService): MoviesRepos
         }
     }
 
-    override suspend fun getTopRatedMovies(page: Int): Flow<Resource<Movies>>  = flow {
+    override suspend fun getTopRatedMovies(page: Int): Flow<Resource<MoviesModel>>  = flow {
         emit(Resource.Loading())
 
         try {
-            val movies = apiService.getTopRatedMovies(page)
+            val movies = apiService.getTopRatedMovies(page).toMoviesModel()
             emit(Resource.Success(movies))
 
         } catch (e: Exception) {
@@ -51,11 +60,11 @@ class MoviesRepositoryImpl(private val apiService: MovieApiService): MoviesRepos
         }
     }
 
-    override suspend fun getUpcomingMovies(page: Int): Flow<Resource<Movies>> = flow {
+    override suspend fun getUpcomingMovies(page: Int): Flow<Resource<MoviesModel>> = flow {
         emit(Resource.Loading())
 
         try {
-            val movies = apiService.getUpcomingMovies(page)
+            val movies = apiService.getUpcomingMovies(page).toMoviesModel()
             emit(Resource.Success(movies))
 
         } catch (e: Exception) {
@@ -80,11 +89,11 @@ class MoviesRepositoryImpl(private val apiService: MovieApiService): MoviesRepos
         }
     }
 
-    override suspend fun searchMovie(query: String, page: Int): Flow<Resource<Movies>> = flow {
+    override suspend fun searchMovie(query: String, page: Int): Flow<Resource<MoviesModel>> = flow {
         emit(Resource.Loading())
 
         try {
-            val movies = apiService.searchMovie(query,page)
+            val movies = apiService.searchMovie(query,page).toMoviesModel()
             emit(Resource.Success(movies))
 
         } catch (e: Exception) {
@@ -163,5 +172,35 @@ class MoviesRepositoryImpl(private val apiService: MovieApiService): MoviesRepos
 
         }
     }
+
+    override suspend fun getFavoriteMovies(): Flow<Resource<List<MovieMainItem>>> = flow {
+        emit(Resource.Loading())
+
+        try {
+             db.movieDao().getAllMovies()
+                 .map { movieEntities ->
+                     movieEntities.map { it.toMovieItem() }
+                 }.collect{
+                     movies ->
+                     emit(Resource.Success(movies))
+            }
+        } catch (e: Exception) {
+
+            emit(Resource.Error(e.message ?: "An error occurred"))
+
+        }
+    }
+
+    override suspend fun addFavoriteMovie(movie: MovieMainItem) {
+        db.movieDao().upsert(movie.toMovieEntity())
+    }
+
+    override suspend fun removeFavoriteMovie(movie: MovieMainItem) {
+        db.movieDao().delete(movie.toMovieEntity())
+    }
+
+    override suspend fun checkFavoriteMovie(movieId: Int): Boolean =
+        db.movieDao().getMovieById(movieId) != null
+
 
 }

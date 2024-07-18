@@ -4,6 +4,7 @@ import org.koin.compose.viewmodel.dsl.viewModelOf
 import org.koin.dsl.module
 import id.slavnt.composemp.presentation.AppViewModel
 import id.slavnt.composemp.presentation.detailscreen.DetailMovieViewModel
+import id.slavnt.composemp.presentation.favoritescreen.FavoriteMovieViewModel
 import id.slavnt.composemp.presentation.mainscreen.MainScreenViewModel
 import org.koin.compose.viewmodel.dsl.viewModel
 
@@ -21,6 +22,8 @@ val presentationModule = module {
 
 
     viewModelOf(::DetailMovieViewModel)
+
+    viewModelOf(::FavoriteMovieViewModel)
 
 //   viewModel {
 //       DetailMovieViewModel(get())

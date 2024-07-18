@@ -1,5 +1,6 @@
 package id.slavnt.composemp.presentation.mainscreen
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -23,8 +24,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import id.slavnt.composemp.common.Constants
-import id.slavnt.composemp.data.remote.dt_object.Movies
-import id.slavnt.composemp.data.remote.dt_object.toMovieItem
+import id.slavnt.composemp.domain.models.MovieMainItem
+import id.slavnt.composemp.domain.models.MoviesModel
 import id.slavnt.composemp.presentation.mainscreen.components.MovieItem
 import id.slavnt.composemp.presentation.mainscreen.components.SearchBar
 import id.slavnt.composemp.presentation.navigation.Screen
@@ -54,6 +55,17 @@ fun MovieScreenDesktop(
         )
         Spacer(modifier = Modifier.height(16.dp))
 
+        Text(
+            text = "Favorite Movies",
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+                .clickable {
+                    navController.navigate(Screen.FavoriteMovieScreen.route)
+                },
+            style = MaterialTheme.typography.h6
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
         if (searchQuery.isNotEmpty() && searchResult.results.isNotEmpty()) {
 
             MovieSectionDesktop(
@@ -62,7 +74,10 @@ fun MovieScreenDesktop(
                 modifier = Modifier.weight(1f),
                 onNextPage = { viewModel.loadNextSearchPage(searchQuery) },
                 onPreviousPage = { viewModel.loadPreviousSearchPage(searchQuery) },
-                navController = navController
+                navController = navController,
+                onFavoriteClick = { movie ->
+                    viewModel.toggleFavorite(movie)
+                }
             )
 
         } else{
@@ -79,7 +94,10 @@ fun MovieScreenDesktop(
                     modifier = Modifier.weight(1f),
                     onNextPage = { viewModel.loadNextPopularPage() },
                     onPreviousPage = { viewModel.loadPreviousPopularPage() },
-                    navController = navController
+                    navController = navController,
+                    onFavoriteClick = { movie ->
+                        viewModel.toggleFavorite(movie)
+                    }
                 )
                 MovieSectionDesktop(
                     title = "Top Rated Movies",
@@ -87,7 +105,10 @@ fun MovieScreenDesktop(
                     modifier = Modifier.weight(1f),
                     onNextPage = { viewModel.loadNextTopRatedPage() },
                     onPreviousPage = { viewModel.loadPreviousTopRatedPage() },
-                    navController = navController
+                    navController = navController,
+                    onFavoriteClick = { movie ->
+                        viewModel.toggleFavorite(movie)
+                    }
                 )
                 MovieSectionDesktop(
                     title = "Upcoming Movies",
@@ -95,7 +116,10 @@ fun MovieScreenDesktop(
                     modifier = Modifier.weight(1f),
                     onNextPage = { viewModel.loadNextUpcomingPage() },
                     onPreviousPage = { viewModel.loadPreviousUpcomingPage() },
-                    navController = navController
+                    navController = navController,
+                    onFavoriteClick = { movie ->
+                        viewModel.toggleFavorite(movie)
+                    }
                 )
 
             }
@@ -106,11 +130,12 @@ fun MovieScreenDesktop(
 @Composable
 fun MovieSectionDesktop(
     title: String,
-    sectionData: Movies,
+    sectionData: MoviesModel,
     onNextPage: () -> Unit,
     onPreviousPage: () -> Unit,
     modifier: Modifier = Modifier,
-    navController: NavController
+    navController: NavController,
+    onFavoriteClick: (MovieMainItem) -> Unit
 ) {
     Column(modifier = modifier) {
         Text(
@@ -149,13 +174,16 @@ fun MovieSectionDesktop(
         ) {
             items(sectionData.results) { movie ->
                 MovieItem(
-                    movie = movie.toMovieItem(),
+                    movie = movie,
                     columnModifier = Modifier.width(300.dp),
                     imageModifier = Modifier.height(400.dp),
                     onItemClick = { movieDetail ->
                         navController.navigate(
                             Screen.MovieDetailScreen.route
                                     + "?${Constants.MOVIE_ID}=${movieDetail.id}")
+                    },
+                    onFavoriteClick = { favMovie ->
+                        onFavoriteClick(favMovie)
                     }
                 )
             }

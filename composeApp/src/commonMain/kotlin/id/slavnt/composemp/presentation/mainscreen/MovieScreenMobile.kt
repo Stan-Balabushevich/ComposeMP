@@ -1,5 +1,6 @@
 package id.slavnt.composemp.presentation.mainscreen
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,12 +19,13 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import id.slavnt.composemp.common.Constants
-import id.slavnt.composemp.data.remote.dt_object.Movies
-import id.slavnt.composemp.data.remote.dt_object.toMovieItem
+import id.slavnt.composemp.domain.models.MovieMainItem
+import id.slavnt.composemp.domain.models.MoviesModel
 import id.slavnt.composemp.presentation.mainscreen.components.MovieItem
 import id.slavnt.composemp.presentation.mainscreen.components.SearchBar
 import id.slavnt.composemp.presentation.navigation.Screen
@@ -52,6 +54,17 @@ fun MovieScreenMobile(
         )
         Spacer(modifier = Modifier.height(16.dp))
 
+        Text(
+            text = "Favorite Movies",
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+                .clickable {
+                    navController.navigate(Screen.FavoriteMovieScreen.route)
+                },
+            style = MaterialTheme.typography.h6
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
         LazyColumn (
             modifier = Modifier.fillMaxSize()
         ){
@@ -68,7 +81,10 @@ fun MovieScreenMobile(
                         onPreviousPage = {
                             viewModel.loadPreviousSearchPage(searchQuery)
                         },
-                        navController = navController
+                        navController = navController,
+                        onFavoriteClick = { movie ->
+                            viewModel.toggleFavorite(movie)
+                        }
                     )
                 }
 
@@ -86,7 +102,10 @@ fun MovieScreenMobile(
                         onPreviousPage = {
                             viewModel.loadPreviousPopularPage()
                         },
-                        navController = navController
+                        navController = navController,
+                        onFavoriteClick = { movie ->
+                            viewModel.toggleFavorite(movie)
+                        }
                     )
                 }
 
@@ -104,7 +123,10 @@ fun MovieScreenMobile(
                         onPreviousPage = {
                             viewModel.loadPreviousUpcomingPage()
                         },
-                        navController = navController
+                        navController = navController,
+                        onFavoriteClick = { movie ->
+                            viewModel.toggleFavorite(movie)
+                        }
                     )
                 }
 
@@ -122,7 +144,10 @@ fun MovieScreenMobile(
                         onPreviousPage = {
                             viewModel.loadPreviousTopRatedPage()
                                          },
-                        navController = navController
+                        navController = navController,
+                        onFavoriteClick = { movie ->
+                            viewModel.toggleFavorite(movie)
+                        }
                     )
                 }
             }
@@ -135,11 +160,12 @@ fun MovieScreenMobile(
 @Composable
 fun MovieSectionMobile(
     title: String,
-    sectionData: Movies,
+    sectionData: MoviesModel,
     onNextPage: () -> Unit,
     onPreviousPage: () -> Unit,
     modifier: Modifier = Modifier,
-    navController: NavController
+    navController: NavController,
+    onFavoriteClick: (MovieMainItem) -> Unit
 ) {
     Column {
         Text(text = title, style = MaterialTheme.typography.h6)
@@ -164,15 +190,18 @@ fun MovieSectionMobile(
             }
         }
         LazyRow(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            items(sectionData.results){
+            items(sectionData.results){ movieMainItem ->
                 MovieItem(
-                    movie = it.toMovieItem(),
+                    movie = movieMainItem,
                     columnModifier = Modifier.width(100.dp),
                     imageModifier = Modifier.height(150.dp),
                     onItemClick = { movie ->
                         navController.navigate(
                             Screen.MovieDetailScreen.route
                                     + "?${Constants.MOVIE_ID}=${movie.id}")
+                    },
+                    onFavoriteClick = {
+                        onFavoriteClick(it)
                     }
                 )
             }

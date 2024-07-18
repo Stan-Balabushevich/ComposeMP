@@ -2,15 +2,18 @@ package id.slavnt.composemp.data.local.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import id.slavnt.composemp.data.local.database.db_object.MovieEntity
 import id.slavnt.composemp.data.local.database.db_object.Person
 
 @Database(
-    entities = [Person::class],
-    version = 1
+    entities = [Person::class, MovieEntity::class],
+    version = 2
 )
-abstract class PeopleDatabase: RoomDatabase(), DB {
+abstract class MovieDatabase: RoomDatabase(), DB {
 
     abstract fun peopleDao(): PeopleDao
+
+    abstract fun movieDao(): MovieDao
 
     override fun clearAllTables() {
         super.clearAllTables()

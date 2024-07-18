@@ -4,11 +4,11 @@ import androidx.room.Room
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import platform.Foundation.NSHomeDirectory
 
-fun getPeopleDatabase(): PeopleDatabase {
+fun getMovieDatabase(): MovieDatabase {
     val dbFile = NSHomeDirectory() + "/people.db"
-    return Room.databaseBuilder<PeopleDatabase>(
+    return Room.databaseBuilder<MovieDatabase>(
         name = dbFile,
-        factory = { PeopleDatabase::class.instantiateImpl() }
+        factory = { MovieDatabase::class.instantiateImpl() }
     )
         .setDriver(BundledSQLiteDriver())
         .build()

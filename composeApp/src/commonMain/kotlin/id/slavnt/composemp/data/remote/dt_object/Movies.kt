@@ -1,5 +1,6 @@
 package id.slavnt.composemp.data.remote.dt_object
 import id.slavnt.composemp.domain.models.MovieMainItem
+import id.slavnt.composemp.domain.models.MoviesModel
 import kotlinx.serialization.Serializable
 
 import kotlinx.serialization.SerialName
@@ -56,3 +57,11 @@ fun Movie.toMovieItem(): MovieMainItem = MovieMainItem(
     posterPath = posterPath,
     voteAverage = voteAverage
 )
+
+fun Movies.toMoviesModel(): MoviesModel =
+    MoviesModel(
+        page = page,
+        results = results.map { it.toMovieItem() },
+        totalPages = totalPages,
+        totalResults = totalResults
+    )

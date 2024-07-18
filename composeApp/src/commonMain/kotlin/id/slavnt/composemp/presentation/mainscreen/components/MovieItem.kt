@@ -2,8 +2,13 @@ package id.slavnt.composemp.presentation.mainscreen.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -21,9 +26,10 @@ fun MovieItem(
     movie: MovieMainItem,
     columnModifier: Modifier = Modifier,
     imageModifier: Modifier = Modifier,
-    onItemClick: (MovieMainItem) -> Unit
+    onItemClick: (MovieMainItem) -> Unit,
+    onFavoriteClick: (MovieMainItem) -> Unit
 ) {
-//    val baseUrl = "https://image.tmdb.org/t/p/w500"
+
     val fullPosterUrl = "$BASE_IMAGE_URL${movie.posterPath}"
 
     var imageState by remember { mutableStateOf<AsyncImagePainter.State>(AsyncImagePainter.State.Empty) }
@@ -54,6 +60,16 @@ fun MovieItem(
 //            }
 //            else -> Unit
 //        }
+
+        IconButton(onClick = {
+            onFavoriteClick(movie)
+        }) {
+
+            Icon(
+                imageVector = if (movie.favorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
+                contentDescription = if (movie.favorite) "Remove from favorites" else "Add to favorites"
+            )
+        }
 
         Text(text = movie.title, maxLines = 2, style = MaterialTheme.typography.body1)
         Text(text = "Rate: ${movie.voteAverage}", style = MaterialTheme.typography.body1)
