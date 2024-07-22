@@ -28,12 +28,10 @@ import id.slavnt.composemp.common.Constants
 import id.slavnt.composemp.presentation.mainscreen.MainScreenViewModel
 import id.slavnt.composemp.presentation.mainscreen.components.MovieItem
 import id.slavnt.composemp.presentation.navigation.Screen
-import org.koin.compose.koinInject
 
 @Composable
 fun FavoriteMovieScreen(
     navController: NavController,
-//    viewModel: FavoriteMovieViewModel = koinInject()
     viewModel: MainScreenViewModel
 ){
 

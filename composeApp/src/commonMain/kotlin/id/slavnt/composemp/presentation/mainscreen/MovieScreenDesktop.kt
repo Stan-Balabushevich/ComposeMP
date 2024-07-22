@@ -1,6 +1,5 @@
 package id.slavnt.composemp.presentation.mainscreen
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -55,19 +54,7 @@ fun MovieScreenDesktop(
         )
         Spacer(modifier = Modifier.height(16.dp))
 
-        Text(
-            text = "Favorite Movies",
-            modifier = Modifier.align(Alignment.CenterHorizontally)
-                .clickable {
-                    navController.navigate(Screen.FavoriteMovieScreen.route)
-                },
-            style = MaterialTheme.typography.h6
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
         if (searchQuery.isNotEmpty() && searchResult.results.isNotEmpty()) {
-
             MovieSectionDesktop(
                 title = "Search results",
                 sectionData = searchResult,
