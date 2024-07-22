@@ -29,3 +29,12 @@ data class MovieDetailModel(
     val favorite: Boolean = false
 )
 
+fun MovieDetailModel.toMovieItem(): MovieMainItem =
+    MovieMainItem(
+        id = id,
+        posterPath = posterPath,
+        title = title,
+        voteAverage = voteAverage,
+        favorite = favorite
+    )
+

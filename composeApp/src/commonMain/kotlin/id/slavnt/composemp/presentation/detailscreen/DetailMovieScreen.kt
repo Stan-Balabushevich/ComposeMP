@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -37,12 +36,12 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
-import id.slavnt.composemp.common.Constants
 import id.slavnt.composemp.common.Constants.BASE_IMAGE_URL
 import id.slavnt.composemp.domain.models.MovieCastModel
 import id.slavnt.composemp.domain.models.MovieDetailModel
 import id.slavnt.composemp.domain.models.MovieImageModel
 import id.slavnt.composemp.domain.models.ReviewModel
+import id.slavnt.composemp.domain.models.toMovieItem
 import id.slavnt.composemp.presentation.detailscreen.components.CastDialog
 import id.slavnt.composemp.presentation.detailscreen.components.ClickableText
 import id.slavnt.composemp.presentation.detailscreen.components.DialogButton
@@ -77,8 +76,9 @@ fun MovieDetailScreen(
             cast = cast,
             images = images,
             reviews = review?.reviews ?: emptyList(),
-            onFavoriteClick = {
-
+            onFavoriteClick = { movieDetail ->
+                viewModel.toggleFavorite(movieDetail.toMovieItem())
+                viewModelMain.toggleFavorite(movieDetail.toMovieItem())
             }
         )
     } ?: run {
@@ -95,7 +95,7 @@ fun DetailScreen(
     cast: List<MovieCastModel> = emptyList(),
     images: List<MovieImageModel> = emptyList(),
     reviews: List<ReviewModel> = emptyList(),
-    onFavoriteClick: () -> Unit
+    onFavoriteClick: (MovieDetailModel) -> Unit
 ) {
 
     val uriHandler = LocalUriHandler.current
@@ -157,7 +157,7 @@ fun DetailScreen(
 
 
             IconButton(onClick = {
-                onFavoriteClick()
+                onFavoriteClick(movieDetail)
             }) {
 
                 Icon(

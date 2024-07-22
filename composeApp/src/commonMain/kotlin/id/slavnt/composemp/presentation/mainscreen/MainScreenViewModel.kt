@@ -139,12 +139,17 @@ class MainScreenViewModel(
                         }
                         is Resource.Loading -> {}
                         is Resource.Success -> {
-                            result.data?.let {
+                            result.data?.let {  movieList ->
+
+                                val updatedMovies = movieList.results.map { movie ->
+                                    val isFavorite = checkFavoriteMovieUseCase.invoke(movie.id)
+                                    movie.copy(favorite = isFavorite)
+                                }
                                 _searchResult.value = MoviesModel(
-                                    results = it.results,
-                                    page = it.page,
-                                    totalPages = it.totalPages,
-                                    totalResults = it.totalResults
+                                    results = updatedMovies,
+                                    page = movieList.page,
+                                    totalPages = movieList.totalPages,
+                                    totalResults = movieList.totalResults
                                 )
                             }
                         }
@@ -163,12 +168,16 @@ class MainScreenViewModel(
                     }
                     is Resource.Loading -> {}
                     is Resource.Success -> {
-                        result.data?.let {
+                        result.data?.let { movieList ->
+                            val updatedMovies = movieList.results.map { movie ->
+                                val isFavorite = checkFavoriteMovieUseCase.invoke(movie.id)
+                                movie.copy(favorite = isFavorite)
+                            }
                             _upcomingMovies.value = MoviesModel(
-                                results = it.results,
-                                page = it.page,
-                                totalPages = it.totalPages,
-                                totalResults = it.totalResults
+                                results = updatedMovies,
+                                page = movieList.page,
+                                totalPages = movieList.totalPages,
+                                totalResults = movieList.totalResults
                             )
                         }
                     }
@@ -212,12 +221,16 @@ class MainScreenViewModel(
                     is Resource.Error -> {}
                     is Resource.Loading -> {}
                     is Resource.Success -> {
-                        result.data?.let {
+                        result.data?.let { movieList ->
+                            val updatedMovies = movieList.results.map { movie ->
+                                val isFavorite = checkFavoriteMovieUseCase.invoke(movie.id)
+                                movie.copy(favorite = isFavorite)
+                            }
                            _topRatedMovies.value = MoviesModel(
-                                results = it.results,
-                                page = it.page,
-                                totalPages = it.totalPages,
-                                totalResults = it.totalResults
+                                results = updatedMovies,
+                                page = movieList.page,
+                                totalPages = movieList.totalPages,
+                                totalResults = movieList.totalResults
                             )
                         }
                     }
@@ -279,7 +292,4 @@ class MainScreenViewModel(
             onSearchQueryChanged(query ,currentPage - 1)
         }
     }
-
-
-
 }

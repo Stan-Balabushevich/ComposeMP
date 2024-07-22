@@ -3,11 +3,10 @@ package id.slavnt.composemp.presentation.detailscreen
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import id.slavnt.composemp.common.Resource
-import id.slavnt.composemp.data.remote.dt_object.MovieCredits
-import id.slavnt.composemp.data.remote.dt_object.MovieReviews
 import id.slavnt.composemp.domain.models.MovieCastModel
 import id.slavnt.composemp.domain.models.MovieDetailModel
 import id.slavnt.composemp.domain.models.MovieImageModel
+import id.slavnt.composemp.domain.models.MovieMainItem
 import id.slavnt.composemp.domain.models.MovieReviewModel
 import id.slavnt.composemp.domain.models.MovieVideoModel
 import id.slavnt.composemp.domain.usecase.AddFavoriteMovieUseCase
@@ -57,6 +56,21 @@ class DetailMovieViewModel(
         loadMovieImages(movieId)
     }
 
+    fun toggleFavorite(movie: MovieMainItem) {
+        viewModelScope.launch {
+            val updatedMovie = movie.copy(favorite = !movie.favorite)
+            if (updatedMovie.favorite) {
+                addFavoriteMovieUseCase(updatedMovie)
+            } else {
+                removeFavoriteMovieUseCase(updatedMovie)
+            }
+
+            val isFavorite = checkFavoriteMovieUseCase.invoke(movie.id)
+            _movieDetail.value = _movieDetail.value?.copy(favorite = isFavorite)
+
+        }
+    }
+
     private fun loadMovieDetails(movieId: Int) {
         viewModelScope.launch {
             getMovieByIdUseCase.invoke(movieId).collect { result ->
@@ -67,7 +81,8 @@ class DetailMovieViewModel(
                     is Resource.Loading -> {}
                     is Resource.Success -> {
                         result.data?.let { movieDetail ->
-                            _movieDetail.value = movieDetail
+                            val isFavorite = checkFavoriteMovieUseCase.invoke(movieDetail.id)
+                            _movieDetail.value = movieDetail.copy(favorite = isFavorite)
                         }
                     }
                 }}
