@@ -46,6 +46,7 @@ fun MovieScreenDesktop(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
+            .padding(bottom = 46.dp)
     ) {
         SearchBar(
             query = searchQuery,

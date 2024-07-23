@@ -130,6 +130,7 @@ fun DetailScreen(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
+            .padding(bottom = 46.dp)
     ) {
 
         Row(

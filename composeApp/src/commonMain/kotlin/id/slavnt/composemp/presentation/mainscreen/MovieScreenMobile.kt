@@ -1,6 +1,5 @@
 package id.slavnt.composemp.presentation.mainscreen
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,7 +18,6 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -46,23 +44,13 @@ fun MovieScreenMobile(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
+            .padding(bottom = 46.dp)
     ) {
         SearchBar(
             query = searchQuery,
             onQueryChanged = { viewModel.setSearchQuery(it) },
             onSearch = { viewModel.onSearchQueryChanged(searchQuery,1) }
         )
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Text(
-            text = "Favorite Movies",
-            modifier = Modifier.align(Alignment.CenterHorizontally)
-                .clickable {
-                    navController.navigate(Screen.FavoriteMovieScreen.route)
-                },
-            style = MaterialTheme.typography.h6
-        )
-
         Spacer(modifier = Modifier.height(16.dp))
 
         LazyColumn (
