@@ -1,6 +1,5 @@
 package id.slavnt.composemp.presentation.detailscreen
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,7 +13,9 @@ import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
@@ -49,12 +50,11 @@ import id.slavnt.composemp.presentation.detailscreen.components.ImagesDialog
 import id.slavnt.composemp.presentation.detailscreen.components.ReviewDialog
 import id.slavnt.composemp.presentation.mainscreen.MainScreenViewModel
 import id.slavnt.composemp.presentation.navigation.Screen
-import org.koin.compose.koinInject
 
 @Composable
 fun MovieDetailScreen(
     movieId: Int,
-    viewModel: DetailMovieViewModel = koinInject(),
+    viewModel: DetailMovieViewModel,
     // Both screens have to use same view model instance to retain state of search query and page number
     viewModelMain: MainScreenViewModel,
     navController: NavController
@@ -104,6 +104,7 @@ fun DetailScreen(
     var showCastDialog by remember { mutableStateOf(false) }
     var showReviewDialog by remember { mutableStateOf(false) }
 
+
     CastDialog(
         showDialog = showCastDialog,
         onDismiss = { showCastDialog = false },
@@ -126,300 +127,282 @@ fun DetailScreen(
         reviews = reviews
     )
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-            .padding(bottom = 46.dp)
-    ) {
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            IconButton(onClick = {
-                // To avoid popBackStack() to blank screen
-                if (navController.previousBackStackEntry != null) {
-                    navController.popBackStack()
-                } else {
-                    // Handle the case when there is no back stack entry
-                    // For example, navigate to a specific screen or show a message
-                    navController.navigate(Screen.MovieListScreen.route) {
-                        popUpTo(Screen.MovieListScreen.route) {
-                            inclusive = true
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Movie Details") },
+                navigationIcon = {
+                        IconButton(onClick = {
+                            // To avoid popBackStack() to blank screen
+                            if (navController.previousBackStackEntry != null) {
+                                navController.popBackStack()
+                            } else {
+                                // Handle the case when there is no back stack entry
+                                // For example, navigate to a specific screen or show a message
+                                navController.navigate(Screen.MovieListScreen.route) {
+                                    popUpTo(Screen.MovieListScreen.route) {
+                                        inclusive = true
+                                    }
+                                }
+                            }
+                        }) {
+                            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                         }
+                },
+                actions = {
+                    IconButton(onClick = {
+                        onFavoriteClick(movieDetail)
+                    }) {
+                        Icon(
+                            imageVector = if (movieDetail.favorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
+                            contentDescription = if (movieDetail.favorite) "Remove from favorites" else "Add to favorites"
+                        )
                     }
                 }
-            }) {
-                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-            }
-
-
-            IconButton(onClick = {
-                onFavoriteClick(movieDetail)
-            }) {
-
-                Icon(
-                    imageVector = if (movieDetail.favorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
-                    contentDescription = if (movieDetail.favorite) "Remove from favorites" else "Add to favorites"
-                )
-            }
+            )
         }
+    ) {
 
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+                .padding(bottom = 46.dp)
+        ) {
 
-        Spacer(modifier = Modifier.height(8.dp))
+            LazyColumn(Modifier.fillMaxSize()) {
 
-        LazyColumn(Modifier.fillMaxSize()) {
+                item { AsyncImage(
+                    model = "$BASE_IMAGE_URL${movieDetail.posterPath}",
+                    contentDescription = movieDetail.title,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .width(300.dp)
+                        .height(400.dp),
+                ) }
 
-            item { AsyncImage(
-                model = "$BASE_IMAGE_URL${movieDetail.posterPath}",
-                contentDescription = movieDetail.title,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .width(300.dp)
-                    .height(400.dp),
-            ) }
+                item {
 
-            item {
+                    Row(modifier = Modifier.fillMaxWidth()) {
+                        DialogButton(text = "Cast", onClick = { showCastDialog = true })
+                        Spacer(modifier = Modifier.width(8.dp))
+                        DialogButton(text = "Images", onClick = { showImagesDialog = true })
+                        Spacer(modifier = Modifier.width(8.dp))
+                        DialogButton(text = "Reviews", onClick = { showReviewDialog = true })
+                        Spacer(modifier = Modifier.width(8.dp))
+                    }
+                }
 
-                Row(modifier = Modifier.fillMaxWidth()) {
+                item {
+                    SelectionContainer {
+                        Text(
+                            text = movieDetail.title,
+                            style = MaterialTheme.typography.h4,
+                            modifier = Modifier.padding(bottom = 8.dp)
+                        )
+                    }
+                }
 
-                    DialogButton(text = "Cast", onClick = { showCastDialog = true })
-                    Spacer(modifier = Modifier.width(8.dp))
-                    DialogButton(text = "Images", onClick = { showImagesDialog = true })
-                    Spacer(modifier = Modifier.width(8.dp))
-                    DialogButton(text = "Reviews", onClick = { showReviewDialog = true })
+                item {
+
+                    DialogButton(text = "Videos", onClick = {
+                        navController.navigate(Screen.VideoScreen.route)
+                    })
 
                 }
-            }
 
-            item {
-                SelectionContainer {
+                item {
+
+                    ClickableText(
+                        text = movieDetail.homepage,
+                        onClick = { movieDetail.homepage.let { uriHandler.openUri(it) } },
+                        style = MaterialTheme.typography.body1,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+
+                }
+
+                item {
+
                     Text(
-                        text = movieDetail.title,
-                        style = MaterialTheme.typography.h4,
+                        text = buildAnnotatedString {
+                            withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                                append("Tagline: ")
+                            }
+                            append(movieDetail.tagline)
+                        },
+                        style = MaterialTheme.typography.body1,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                }
+
+                item { Text(
+                    text =  buildAnnotatedString {
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                            append("Original Title: ")
+                        }
+                        append(movieDetail.originalTitle)
+                    },
+                    style = MaterialTheme.typography.body1,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                ) }
+                item { Text(
+                    text = buildAnnotatedString {
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                            append("Release Date: ")
+                        }
+                        append(movieDetail.releaseDate)
+                    } ,
+                    style = MaterialTheme.typography.body1,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+                }
+                item { Text(
+                    text = buildAnnotatedString {
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                            append("Overview: ")
+                        }
+                        append(movieDetail.overview)
+                    } ,
+                    style = MaterialTheme.typography.body1,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                ) }
+
+                item { Text(
+                    text =  buildAnnotatedString {
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                            append("Genres: ")
+                        }
+                        append(movieDetail.genres.joinToString(", "))
+                    } ,
+                    style = MaterialTheme.typography.body1,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                ) }
+
+                item {
+                    Text(
+                        text = buildAnnotatedString {
+                            withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                                append("Production Companies: ")
+                            }
+                            append(movieDetail.productionCompanies.joinToString(", "))
+                        } ,
+                        style = MaterialTheme.typography.body1,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                }
+
+                item {
+                    Text(
+                        text = buildAnnotatedString {
+                            withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                                append("Production Countries: ")
+                            }
+                            append(movieDetail.productionCountries.joinToString(", ") )
+                        }   ,
+                        style = MaterialTheme.typography.body1,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                }
+
+                item {
+
+                    Text(
+                        text = buildAnnotatedString {
+                            withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                                append("Spoken Languages: ")
+                            }
+                            append(movieDetail.spokenLanguages.joinToString(", "))
+                        }  ,
+                        style = MaterialTheme.typography.body1,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+
+                }
+                item { Text(
+                    text = buildAnnotatedString {
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                            append("Original language: ")
+                        }
+                        append(movieDetail.originalLanguage)
+                    } ,
+                    style = MaterialTheme.typography.body1,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                ) }
+                item { Text(
+                    text = buildAnnotatedString {
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                            append("Popularity: ")
+                        }
+                        append("${movieDetail.popularity}")
+                    } ,
+                    style = MaterialTheme.typography.body1,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                ) }
+                item {  Text(
+                    text = buildAnnotatedString {
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                            append("Vote Average: ")
+                        }
+                        append("${movieDetail.voteAverage}")
+                    } ,
+                    style = MaterialTheme.typography.body1,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                ) }
+                item {  Text(
+                    text = buildAnnotatedString {
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                            append("Vote Count: ")
+                        }
+                        append("${movieDetail.voteCount}")
+                    }  ,
+                    style = MaterialTheme.typography.body1,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                ) }
+                item { Text(
+                    text = buildAnnotatedString {
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                            append("Status: ")
+                        }
+                        append(movieDetail.status)
+                    } ,
+                    style = MaterialTheme.typography.body1,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                ) }
+                item {  Text(
+                    text = buildAnnotatedString {
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                            append("Budget: ")
+                        }
+                        append("$${movieDetail.budget}")
+                    } ,
+                    style = MaterialTheme.typography.body1,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                ) }
+                item { Text(
+                    text =  buildAnnotatedString {
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                            append("Revenue: ")
+                        }
+                        append("$${movieDetail.revenue}")
+                    } ,
+                    style = MaterialTheme.typography.body1,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                ) }
+
+                item {
+                    Text(
+                        text = buildAnnotatedString {
+                            withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                                append("Runtime: ")
+                            }
+                            append("${movieDetail.runtime} minutes")
+                        } ,
+                        style = MaterialTheme.typography.body1,
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
                 }
             }
-
-            // can be deleted after testing
-            item {
-                SelectionContainer {
-                    Text(
-                        text = movieDetail.id.toString(),
-                        style = MaterialTheme.typography.h4,
-                        modifier = Modifier.padding(bottom = 8.dp)
-                    ) }
-            }
-
-            item {
-
-                ClickableText(
-                    text = movieDetail.homepage,
-                    onClick = { movieDetail.homepage.let { uriHandler.openUri(it) } },
-                    style = MaterialTheme.typography.body1,
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
-
-            }
-
-            item {
-
-                Text(
-                    text = buildAnnotatedString {
-                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                            append("Tagline: ")
-                        }
-                        append(movieDetail.tagline)
-                    },
-                    style = MaterialTheme.typography.body1,
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
-            }
-
-            item { Text(
-                text =  buildAnnotatedString {
-                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                        append("Original Title: ")
-                    }
-                    append(movieDetail.originalTitle)
-                },
-                style = MaterialTheme.typography.body1,
-                modifier = Modifier.padding(bottom = 8.dp)
-            ) }
-            item { Text(
-                text = buildAnnotatedString {
-                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                        append("Release Date: ")
-                    }
-                    append(movieDetail.releaseDate)
-                } ,
-                style = MaterialTheme.typography.body1,
-                modifier = Modifier.padding(bottom = 8.dp)
-            )
-            }
-            item { Text(
-                text = buildAnnotatedString {
-                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                        append("Overview: ")
-                    }
-                    append(movieDetail.overview)
-                } ,
-                style = MaterialTheme.typography.body1,
-                modifier = Modifier.padding(bottom = 8.dp)
-            ) }
-
-            item { Text(
-                text =  buildAnnotatedString {
-                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                        append("Genres: ")
-                    }
-                    append(movieDetail.genres.joinToString(", "))
-                } ,
-                style = MaterialTheme.typography.body1,
-                modifier = Modifier.padding(bottom = 8.dp)
-            ) }
-
-            item {
-                Text(
-                    text = buildAnnotatedString {
-                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                            append("Production Companies: ")
-                        }
-                        append(movieDetail.productionCompanies.joinToString(", "))
-                    } ,
-                    style = MaterialTheme.typography.body1,
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
-            }
-
-            item {
-                Text(
-                    text = buildAnnotatedString {
-                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                            append("Production Countries: ")
-                        }
-                        append(movieDetail.productionCountries.joinToString(", ") )
-                    }   ,
-                    style = MaterialTheme.typography.body1,
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
-            }
-
-            item {
-
-                Text(
-                    text = buildAnnotatedString {
-                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                            append("Spoken Languages: ")
-                        }
-                        append(movieDetail.spokenLanguages.joinToString(", "))
-                    }  ,
-                    style = MaterialTheme.typography.body1,
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
-
-            }
-            item { Text(
-                text = buildAnnotatedString {
-                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                        append("Original language: ")
-                    }
-                    append(movieDetail.originalLanguage)
-                } ,
-                style = MaterialTheme.typography.body1,
-                modifier = Modifier.padding(bottom = 8.dp)
-            ) }
-            item { Text(
-                text = buildAnnotatedString {
-                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                        append("Popularity: ")
-                    }
-                    append("${movieDetail.popularity}")
-                } ,
-                style = MaterialTheme.typography.body1,
-                modifier = Modifier.padding(bottom = 8.dp)
-            ) }
-            item {  Text(
-                text = buildAnnotatedString {
-                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                        append("Vote Average: ")
-                    }
-                    append("${movieDetail.voteAverage}")
-                } ,
-                style = MaterialTheme.typography.body1,
-                modifier = Modifier.padding(bottom = 8.dp)
-            ) }
-            item {  Text(
-                text = buildAnnotatedString {
-                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                        append("Vote Count: ")
-                    }
-                    append("${movieDetail.voteCount}")
-                }  ,
-                style = MaterialTheme.typography.body1,
-                modifier = Modifier.padding(bottom = 8.dp)
-            ) }
-            item { Text(
-                text = buildAnnotatedString {
-                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                        append("Status: ")
-                    }
-                    append(movieDetail.status)
-                } ,
-                style = MaterialTheme.typography.body1,
-                modifier = Modifier.padding(bottom = 8.dp)
-            ) }
-            item {  Text(
-                text = buildAnnotatedString {
-                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                        append("Budget: ")
-                    }
-                    append("$${movieDetail.budget}")
-                } ,
-                style = MaterialTheme.typography.body1,
-                modifier = Modifier.padding(bottom = 8.dp)
-            ) }
-            item { Text(
-                text =  buildAnnotatedString {
-                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                        append("Revenue: ")
-                    }
-                    append("$${movieDetail.revenue}")
-                } ,
-                style = MaterialTheme.typography.body1,
-                modifier = Modifier.padding(bottom = 8.dp)
-            ) }
-
-            item {
-                Text(
-                    text = buildAnnotatedString {
-                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                            append("Runtime: ")
-                        }
-                        append("${movieDetail.runtime} minutes")
-                    } ,
-                    style = MaterialTheme.typography.body1,
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
-            }
-
-//            item {
-//                VideoButton(
-//                    hasVideo = true,
-////                    hasVideo = movieDetail.video,
-//                    onClick = {
-//                        showImagesDialog = true
-//                    }
-//                )
-//            }
-
-
         }
-
     }
-
 }

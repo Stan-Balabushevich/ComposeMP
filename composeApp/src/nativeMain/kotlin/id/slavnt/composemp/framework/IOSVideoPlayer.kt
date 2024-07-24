@@ -5,7 +5,7 @@ import platform.Foundation.NSURL
 import platform.Foundation.NSURLRequest
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.viewinterop.UIKitView
-import id.slavnt.composemp.domain.video.VideoPlayer
+import id.slavnt.composemp.framework.video.VideoPlayer
 
 class IOSVideoPlayer : VideoPlayer {
     @Composable

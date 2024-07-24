@@ -9,8 +9,10 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import id.slavnt.composemp.common.Constants
 import id.slavnt.composemp.presentation.commoncomponents.BottomNavigationBar
+import id.slavnt.composemp.presentation.detailscreen.DetailMovieViewModel
 import id.slavnt.composemp.presentation.detailscreen.fullimagescreen.FullScreenImage
 import id.slavnt.composemp.presentation.detailscreen.MovieDetailScreen
+import id.slavnt.composemp.presentation.detailscreen.videoscreen.VideoScreen
 import id.slavnt.composemp.presentation.favoritescreen.FavoriteMovieScreen
 import id.slavnt.composemp.presentation.mainscreen.MainScreenViewModel
 import id.slavnt.composemp.presentation.mainscreen.MovieScreenDesktop
@@ -22,7 +24,9 @@ import org.koin.compose.koinInject
 fun NavigationMobile() {
 
     // Both screens have to use same view model instance to retain state of search query and page number
-    val viewModel: MainScreenViewModel = koinInject()
+    val viewModelMain: MainScreenViewModel = koinInject()
+
+    val viewModelDetail: DetailMovieViewModel = koinInject()
 
     val navController = rememberNavController()
 
@@ -34,11 +38,11 @@ fun NavigationMobile() {
         ) {
 
             composable(route = Screen.MovieListScreen.route) {
-                MovieScreenMobile(navController = navController, viewModel = viewModel)
+                MovieScreenMobile(navController = navController, viewModel = viewModelMain)
             }
 
             composable(route = Screen.FavoriteMovieScreen.route) {
-                FavoriteMovieScreen(navController = navController, viewModel = viewModel)
+                FavoriteMovieScreen(navController = navController, viewModel = viewModelMain)
             }
 
             composable(
@@ -53,8 +57,15 @@ fun NavigationMobile() {
             ) {
 
                 val movieId = it.arguments?.getInt(Constants.MOVIE_ID) ?: 0
-                MovieDetailScreen(movieId = movieId, navController = navController, viewModelMain = viewModel)
+                MovieDetailScreen(movieId = movieId, navController = navController, viewModelMain = viewModelMain, viewModel = viewModelDetail)
 
+            }
+
+
+            composable(
+                route = Screen.VideoScreen.route
+            ) {
+                VideoScreen(navController = navController, viewModel = viewModelDetail)
             }
         }
 
@@ -67,7 +78,9 @@ fun NavigationMobile() {
 @Composable
 fun NavigationDesktop() {
 
-    val viewModel: MainScreenViewModel = koinInject()
+    val viewModelMain: MainScreenViewModel = koinInject()
+
+    val viewModelDetail: DetailMovieViewModel = koinInject()
 
     val navController = rememberNavController()
 
@@ -79,12 +92,12 @@ fun NavigationDesktop() {
             startDestination = Screen.MovieListScreen.route
         ) {
             composable(route = Screen.MovieListScreen.route) {
-                MovieScreenDesktop(navController = navController, viewModel = viewModel)
+                MovieScreenDesktop(navController = navController, viewModel = viewModelMain)
             }
 
             composable(route = Screen.FavoriteMovieScreen.route) {
 
-                FavoriteMovieScreen(navController = navController, viewModel = viewModel)
+                FavoriteMovieScreen(navController = navController, viewModel = viewModelMain)
 
             }
 
@@ -100,7 +113,7 @@ fun NavigationDesktop() {
             ) {
 
                 val movieId = it.arguments?.getInt(Constants.MOVIE_ID) ?: 0
-                MovieDetailScreen(movieId = movieId, navController = navController, viewModelMain = viewModel)
+                MovieDetailScreen(movieId = movieId, navController = navController, viewModelMain = viewModelMain, viewModel = viewModelDetail )
 
             }
 
@@ -119,11 +132,13 @@ fun NavigationDesktop() {
                     navController.popBackStack()
                 }
             }
+
+            composable(
+                route = Screen.VideoScreen.route
+            ) {
+                VideoScreen(navController = navController, viewModel = viewModelDetail)
+            }
         }
-
-
     }
-
-
 }
 

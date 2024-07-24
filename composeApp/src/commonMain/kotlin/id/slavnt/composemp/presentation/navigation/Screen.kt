@@ -10,4 +10,5 @@ sealed class Screen(val route: String, val title: String = "", val icon: ImageVe
     data object MovieDetailScreen: Screen("movie_detail_screen")
     data object FullImageScreen: Screen("full_image_screen")
     data object FavoriteMovieScreen: Screen("favorite_movie_screen", "Favorites", Icons.Filled.Favorite)
+    data object VideoScreen: Screen("video_screen", "Videos")
 }
