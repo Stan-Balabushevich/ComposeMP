@@ -44,13 +44,20 @@ fun VideoItem(
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
+                text = video.type,
+                modifier = Modifier.fillMaxSize()
+            )
+        Spacer(modifier = Modifier.height(8.dp))
+            Text(
                 text = video.publishedAt,
                 modifier = Modifier.fillMaxSize()
             )
+        Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = "${video.size}p",
+                modifier = Modifier.fillMaxSize()
+            )
+
         }
-
     }
-
-
-
 }

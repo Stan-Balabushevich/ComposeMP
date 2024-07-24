@@ -1,7 +1,6 @@
 package id.slavnt.composemp.framework
 
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -19,16 +18,15 @@ class AndroidVideoPlayer : VideoPlayer {
     @Composable
     override fun playVideo(videoKey: String) {
 
-        val lifecycle = LocalLifecycleOwner.current
+        val lifecycle = LocalLifecycleOwner.current.lifecycle
 
         AndroidView(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(8.dp)
                 .clip(RoundedCornerShape(10.dp)),
             factory = { context ->
                 YouTubePlayerView(context).apply {
-                    lifecycle.lifecycle.addObserver(this)
+                    lifecycle.addObserver(this)
 
                     addYouTubePlayerListener(object : AbstractYouTubePlayerListener() {
                         override fun onReady(youTubePlayer: YouTubePlayer) {

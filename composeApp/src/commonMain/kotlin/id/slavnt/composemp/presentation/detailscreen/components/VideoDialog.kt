@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
@@ -34,15 +35,15 @@ fun VideoDialog(
         Dialog(onDismissRequest = { onDismiss() }) {
             Box(
                 modifier = Modifier
+                    .height(300.dp)
                     .fillMaxWidth()
                     .background(Color.White, shape = RoundedCornerShape(8.dp))
-                    .padding(16.dp)
+                    .padding(8.dp)
             ) {
                 Column(modifier = Modifier.fillMaxSize()) {
                     Row(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp),
+                            .fillMaxWidth(),
                         horizontalArrangement = Arrangement.End
                     ) {
                         IconButton(onClick = { onDismiss() }) {
