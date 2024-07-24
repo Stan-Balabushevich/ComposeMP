@@ -130,7 +130,7 @@ fun DetailScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Movie Details") },
+                title = { Text(movieDetail.title) },
                 navigationIcon = {
                         IconButton(onClick = {
                             // To avoid popBackStack() to blank screen

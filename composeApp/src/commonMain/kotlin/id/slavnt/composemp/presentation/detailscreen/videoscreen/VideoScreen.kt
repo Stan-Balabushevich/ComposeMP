@@ -36,6 +36,7 @@ fun VideoScreen(
 ) {
 
     val videos by viewModel.movieVideos.collectAsState()
+    val movieDetail by viewModel.movieDetail.collectAsState()
 
     var showVideoDialog by remember { mutableStateOf(false) }
     var selectedVideoKey by remember { mutableStateOf("") }
@@ -50,7 +51,7 @@ fun VideoScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Movie videos") },
+                title = { Text("${movieDetail?.title} videos") },
                 navigationIcon = {
                     IconButton(onClick = {
                         // To avoid popBackStack() to blank screen
