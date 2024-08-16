@@ -1,6 +1,9 @@
 # MovieApp
 
-This project is a cross-platform movie application developed using Compose Multiplatform. It demonstrates the use of modern development practices, including MVVM architecture, Clean Architecture principles, Koin for dependency injection, Room for local database management, Ktor for network requests, and Kotlin Flows. The app integrates with The Movie Database (TMDb) API to display movie information and allows users to save their favorite movies locally.
+MovieApp project is a cross-platform movie application developed using Compose Multiplatform. The app is designed to run on Android, iOS,
+and Desktop platforms. It demonstrates the use of modern development practices, including MVVM architecture, 
+Clean Architecture principles, Koin for dependency injection, Room for local database management, Ktor for network requests, and Kotlin Flows. 
+The app integrates with The Movie Database (TMDb) API to display movie information and allows users to save their favorite movies locally.
 
 ## Table of Contents
 
@@ -16,6 +19,7 @@ This project is a cross-platform movie application developed using Compose Multi
 - Display popular, top-rated, and upcoming movies using the TMDb API.
 - Search for movies across the entire TMDb database.
 - Save favorite movies locally using Room Database.
+- View detailed information about each movie, including images, reviews, and YouTube video trailers (YouTube trailers do not work on iOS).
 - Cross-platform support for Android, iOS, and Desktop.
 
 ## Architecture
