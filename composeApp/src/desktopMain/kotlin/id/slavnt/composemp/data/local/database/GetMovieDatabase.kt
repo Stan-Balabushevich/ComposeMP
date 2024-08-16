@@ -9,6 +9,7 @@ fun getMovieDatabase(): MovieDatabase {
     return Room.databaseBuilder<MovieDatabase>(
         name = dbFile.absolutePath,
     )
+        .fallbackToDestructiveMigration(false)
         .setDriver(BundledSQLiteDriver())
         .build()
 }

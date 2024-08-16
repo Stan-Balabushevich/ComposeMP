@@ -10,6 +10,7 @@ fun getMovieDatabase(): MovieDatabase {
         name = dbFile,
         factory = { MovieDatabase::class.instantiateImpl() }
     )
+        .fallbackToDestructiveMigration(false)
         .setDriver(BundledSQLiteDriver())
         .build()
 }
