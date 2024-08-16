@@ -78,6 +78,8 @@ Replace `"your_api_key_here"` with your actual TMDb API key.
 
 2. **Desktop**:
     - From the terminal or Android Studio, run the `desktopMain` task to start the desktop application.
+    - ![App Screenshot](./images/desktop_run.png)
+    - Note for Windows users: If you encounter issues running the desktop app, ensure that the PATH variables for Java and the path to Java in Android Studio are the same. You may need to install the latest version of Java. You can download it from the [Oracle website](https://www.oracle.com/java/technologies/downloads/)
 
 3. **iOS** (if available):
     - Open the project in Xcode on a macOS machine.
