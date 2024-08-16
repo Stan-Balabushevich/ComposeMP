@@ -1,3 +1,4 @@
+import org.jetbrains.compose.ExperimentalComposeLibrary
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
@@ -74,9 +75,19 @@ kotlin {
 //            implementation(libs.compose.multiplatform.media.player)
 
             // Android you tube player
-            implementation (libs.core)
+            implementation (libs.androidyoutubeplayer)
 
 
+        }
+
+        commonTest.dependencies {
+            implementation(libs.kotlin.test)
+            implementation(kotlin("test-annotations-common"))
+            implementation(libs.assertk)
+            implementation(libs.kotlinx.coroutines.test)
+
+            @OptIn(ExperimentalComposeLibrary::class)
+            implementation(compose.uiTest)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
