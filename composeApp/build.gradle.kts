@@ -113,17 +113,19 @@ kotlin {
 
             //ktor
 //            api(libs.ktor.core)
-            implementation(libs.ktor.core)
-            implementation(libs.ktor.json)
-            implementation(libs.ktor.logging)
-            implementation(libs.ktor.negotiation)
-            implementation(libs.kotlinx.serialization.json)
+//            implementation(libs.ktor.core)
+//            implementation(libs.ktor.json)
+//            implementation(libs.ktor.logging)
+//            implementation(libs.ktor.negotiation)
+//            implementation(libs.kotlinx.serialization.json)
+            implementation(libs.bundles.ktor)
 
             //coil
-            implementation(libs.coil.compose)
-            implementation(libs.coil.compose.core)
-            implementation(libs.coil.network.ktor)
-            implementation(libs.coil.mp)
+//            implementation(libs.coil.compose)
+//            implementation(libs.coil.compose.core)
+//            implementation(libs.coil.network.ktor)
+//            implementation(libs.coil.mp)
+            implementation(libs.bundles.coil)
 
             //common viewmodel
 //            implementation(libs.lifecycle.viewmodel.compose)
@@ -140,6 +142,9 @@ kotlin {
             implementation(libs.vlcj)
 
             implementation(libs.ktor.client.okhttp)
+        }
+        nativeMain.dependencies {
+            implementation(libs.ktor.client.darwin)
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
