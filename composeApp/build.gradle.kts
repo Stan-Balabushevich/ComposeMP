@@ -97,7 +97,9 @@ kotlin {
             implementation(libs.sqlite.bundled)
 
             //koin
-            // if use api in common instead of implementation than do not have to implement it for all platforms
+            // Using api: If you declare a dependency with api in commonMain, the dependency will be available
+            // not only in commonMain but also in all platform-specific source sets that depend on commonMain.
+            // This means you don’t need to redeclare it in platform-specific modules.
 //            api(libs.koin.core)
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
@@ -117,8 +119,6 @@ kotlin {
             implementation(libs.lifecycle.viewmodel.compose)
         }
         desktopMain.dependencies {
-            implementation(compose.desktop.currentOs)
-            implementation(libs.oshi.core)
             implementation(libs.koin.core)
 
             implementation(libs.kotlinx.coroutines.core) // Needed for basic coroutine support
@@ -127,7 +127,9 @@ kotlin {
             implementation(libs.ktor.client.okhttp)
         }
         nativeMain.dependencies {
+            implementation(libs.koin.core)
             implementation(libs.ktor.client.darwin)
+            implementation(libs.kotlinx.serialization.json)
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)

@@ -73,7 +73,7 @@ class MovieApiServiceImpl(private val client: HttpClient) : MovieApiService {
         }.body()
 
     companion object{
-        const val API_KEY = "your_api_key_here"
+        const val API_KEY = "test"
         const val BASE_MOVIE_URL = "https://api.themoviedb.org/3"
     }
 
