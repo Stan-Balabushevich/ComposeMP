@@ -71,13 +71,8 @@ kotlin {
             implementation(libs.ktor.client.okhttp)
             implementation (libs.ktor.client.android)
 
-            //raw file video player
-//            implementation(libs.compose.multiplatform.media.player)
-
             // Android you tube player
             implementation (libs.androidyoutubeplayer)
-
-
         }
 
         commonTest.dependencies {
@@ -113,22 +108,13 @@ kotlin {
 
             //ktor
 //            api(libs.ktor.core)
-//            implementation(libs.ktor.core)
-//            implementation(libs.ktor.json)
-//            implementation(libs.ktor.logging)
-//            implementation(libs.ktor.negotiation)
-//            implementation(libs.kotlinx.serialization.json)
             implementation(libs.bundles.ktor)
 
             //coil
-//            implementation(libs.coil.compose)
-//            implementation(libs.coil.compose.core)
-//            implementation(libs.coil.network.ktor)
-//            implementation(libs.coil.mp)
             implementation(libs.bundles.coil)
 
             //common viewmodel
-//            implementation(libs.lifecycle.viewmodel.compose)
+            implementation(libs.lifecycle.viewmodel.compose)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
@@ -138,9 +124,6 @@ kotlin {
             implementation(libs.kotlinx.coroutines.core) // Needed for basic coroutine support
             implementation(libs.kotlinx.coroutines.swing) // Needed for Swing-specific coroutine support for desktop
 
-            // to play video
-            implementation(libs.vlcj)
-
             implementation(libs.ktor.client.okhttp)
         }
         nativeMain.dependencies {
@@ -149,9 +132,6 @@ kotlin {
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
             implementation(libs.kotlinx.serialization.json)
-
-            //raw file video player
-//            implementation(libs.compose.multiplatform.media.player)
         }
     }
 }

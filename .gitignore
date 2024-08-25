@@ -18,3 +18,4 @@ captures
 **/xcshareddata/WorkspaceSettings.xcsettings
 
 api_key.txt
+MovieApiServiceImpl.kt
