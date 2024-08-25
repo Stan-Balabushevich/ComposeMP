@@ -12,9 +12,6 @@ import io.ktor.client.call.body
 import io.ktor.client.request.parameter
 import io.ktor.client.request.get
 
-//  If changes are needed to be made in this file:
-//  - check git ignore and remove the file
-//  - set const val API_KEY = "your_api_key_here" before pushing
 class MovieApiServiceImpl(private val client: HttpClient) : MovieApiService {
 
     override suspend fun getPopMovies(page: Int): Movies =
@@ -73,7 +70,8 @@ class MovieApiServiceImpl(private val client: HttpClient) : MovieApiService {
         }.body()
 
     companion object{
-        const val API_KEY = "test"
+        // TODO set const val API_KEY = "your_api_key_here" before pushing
+        const val API_KEY = "your_api_key_here"
         const val BASE_MOVIE_URL = "https://api.themoviedb.org/3"
     }
 

@@ -18,4 +18,3 @@ captures
 **/xcshareddata/WorkspaceSettings.xcsettings
 
 api_key.txt
-composeApp/src/commonMain/kotlin/id/slavnt/composemp/data/remote/MovieApiServiceImpl.kt
