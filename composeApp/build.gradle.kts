@@ -119,6 +119,7 @@ kotlin {
             implementation(libs.lifecycle.viewmodel.compose)
         }
         desktopMain.dependencies {
+            implementation(compose.desktop.currentOs)
             implementation(libs.koin.core)
 
             implementation(libs.kotlinx.coroutines.core) // Needed for basic coroutine support
