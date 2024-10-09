@@ -14,6 +14,12 @@ plugins {
     alias(libs.plugins.kotlinx.serialization)
 }
 
+repositories {
+    mavenCentral()
+    google()
+    gradlePluginPortal()
+}
+
 kotlin {
 
     /**
